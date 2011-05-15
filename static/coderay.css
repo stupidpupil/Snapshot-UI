@@ -1,0 +1,47 @@
+/* @override https://licht.stupidpupil.co.uk/static/coderay.css */
+
+/* @override http://localhost:8080/static/coderay.css */
+
+/* @override https://licht.stupidpupil.co.uk/static/coderay.css */
+
+.CodeRay .an { color:#E7BE69 }                      /* html attribute */  
+.CodeRay .c  { color:#BC9358; font-style: italic; } /* comment */  
+.CodeRay .ch { color:#509E4F }                      /* escaped character */  
+.CodeRay .cl { color:#FFF }                         /* class */  
+.CodeRay .co { color:#FFF }                         /* constant */  
+.CodeRay .fl { color:#A4C260 }                      /* float */  
+.CodeRay .fu { color:#FFC56D }                      /* function */  
+.CodeRay .gv { color:#D0CFFE }                      /* global variable */  
+.CodeRay .i  { color:#A4C260 }                      /* integer */  
+.CodeRay .il { background:#151515 }                 /* inline code */  
+.CodeRay .iv { color:#D0CFFE }                      /* instance variable */  
+.CodeRay .pp { color:#E7BE69 }                      /* doctype */  
+.CodeRay .r  { color:#CB7832 }                      /* keyword */  
+.CodeRay .rx { color:#A4C260 }                      /* regex */  
+.CodeRay .s  { color:#A4C260 }                      /* string */  
+.CodeRay .sy { color:#6C9CBD }                      /* symbol */  
+.CodeRay .ta { color:#E7BE69 }                      /* html tag */  
+.CodeRay .pc { color:#6C9CBD }                      /* boolean */
+
+.diff_in, .diff_out { background-color: rgba(3,78,127,0.54);}
+
+.CodeRay{
+	line-height:1.05em;
+}
+
+
+/* Splits up diff bits*/
+table.filecontent tr.spacing th { text-align:center; }
+table.filecontent tr.spacing td { height: 0.4em; background: #EAF2F5;}
+table.filecontent th.line-num {
+	font-size: 0.8em;
+	color: #787878;
+	border-bottom:1px solid #787878;
+}
+
+table.filecontent tr td.line-code:first-of-type{
+	border-right:1px solid #ddd ;
+}
+
+
+

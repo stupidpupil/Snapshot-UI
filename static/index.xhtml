@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	
+	
+	
+	<link rel="icon" type="image/png" href="/static/img/logo.png"/>
+
+	<link rel="stylesheet" href="/static/layout.css" type="text/css" />
+	<link rel="stylesheet" href="/static/visibility.css" type="text/css" />
+	<link rel="stylesheet" href="/static/aristo.css" type="text/css" />
+	<link rel="stylesheet" href="/static/coderay.css" type="text/css" />
+		
+
+	<script type="text/ecmascript" src="/static/js/mega.js"></script>
+		
+</head>
+
+<body>
+	<div id="header">
+		<h1 id="serverName">
+		Snapshot WebUI
+		</h1>
+		<div id="rightHandHeader">
+			
+			<a class="headerButton" onclick="showRightPanel(!gShowingRightPanel, true);">
+				<img id="splitPaneButton" src="/static/img/twoPane.png" title="Toggle Splitpane View"/>
+			</a>
+			
+			<a class="headerButton" onclick="orderSheetOut('aboutSheet', true)">
+				<img  src="/static/img/about.png" title="Show About…"/>
+			</a>
+						
+		</div>
+
+	</div>
+	
+	<div id="aboutSheet" class="sheet">
+		<h2>Snapshot WebUI</h2>
+		<p>By <a href="http://www.stupidpupil.co.uk">Adam Watkins</a>, licensed under <a href="http://www.gnu.org/licenses/gpl-2.0.html">GPLv2</a>.</p>
+		
+		<p>Uses icons from 
+		<ul>	
+		<li>'Fugue' by <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3</a>,</li>
+		<li>'Project' by <a href="http://bogo-d.deviantart.com">Mihaiciuc Bogdan</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3</a>,</li>
+		
+		<li>and the <a href="http://launchpad.net/candyproject">Candy Project</a>, licensed under <a href="http://www.gnu.org/licenses/gpl-2.0.html">GPLv2</a>.</li>
+		</ul>
+		</p>
+		
+		<p>Incorporates <a href="http://www.redmine.org/projects/redmine/repository/revisions/1516">code</a> from <a href="http://www.redmine.org">Redmine</a>, licensed under <a href="http://www.gnu.org/licenses/gpl-2.0.html">GPLv2</a>.</p>
+
+		<p>Uses <a href="http://www.frequency-decoder.com/2006/09/16/unobtrusive-table-sort-script-revisited">table-sorting code</a> by <a href="http://www.frequency-decoder.com">Brian McAllister</a>, licensed under <a href="https://creativecommons.org/licenses/by-sa/2.5/">CC BY-SA 2.5</a>.</p>
+
+		<p>Uses the <a href="http://developer.yahoo.com/yui/3/">Yahoo! UI Library</a>, licensed under <a href="http://developer.yahoo.com/yui/license.html">BSD-style</a>.</p>
+		
+		
+			<a class="button" onclick="orderSheetOut('aboutSheet', false)">Close</a>
+	
+	
+	</div>
+	
+	<div id="errorSheet" class="sheet">
+		<h2 id="errorHeader">Error loading Snapshots</h2>
+		<p id="errorDescription">The server return an error whilst loading snapshots.</p>
+		<a class="button" onclick="orderSheetOut('errorSheet', false)" >OK</a>
+		
+	</div>
+	
+	<div id="diffContainer">
+		<div id="diffContent"/>
+	</div>
+	
+	<span id="pathComponents">
+	</span>
+	
+	
+	<div id="leftPanel" class="panel">
+		
+		<div class="sidebar">
+			<div class="snapshots">
+			</div>
+		</div>
+		
+		<div class="notSidebar">
+			<div class="infoBox loading">
+				<div class="innerDiv">
+				<span class="filenameSpan"/>
+				<span class="mtimeSpan"/>
+				<div class="buttons">
+				<a class="preview button" onclick="loadPreview('leftPanel');showDiff(false)">Show Preview…</a>
+				<a class="info button" onclick="setPanelClass('leftPanel', 'fileInfo');showDiff(false)">Show Info…</a>
+				<a class="contents button" onclick="setPanelClass('leftPanel', 'dirContents');showDiff(false);">Show Contents…</a>				
+				</div>
+				<a class ="downloadLink"/>
+				</div>
+			</div>
+		
+		<div class="detailsContainer"> <!-- Only one of these subdivs should be visible at any time -->
+			<div class="directoryDetails">
+				<table id="directoryEntriesLeft" class="directoryEntries sortable no-arrow">
+					<tr><th class="sortable">Name</th><th class="sortable">Date Modified</th><th class="sortable">Size</th></tr>
+					<tbody class="directoryEntriesBody"/>
+				</table>
+			</div>
+			
+			<div class="fileDetails">
+				<table class="fileDetailsTable"/>
+			</div>
+			
+			<div class="filePreview">
+				<div class="previewContent"/>
+			</div>
+			
+			<div class="loading">
+				Loading…
+			</div>
+			
+			<div class="nosnapshot">
+				Select a snapshot…
+			</div>
+			
+		</div>
+		</div>
+
+	</div>
+	
+	<div id="rightPanel" class="panel">
+		
+		<div class="sidebar">
+			<div class="snapshots">
+			</div>
+		</div>
+		
+		<div class="notSidebar">
+
+		
+		<div class="infoBox loading">
+			<div class="innerDiv">
+			<span class="filenameSpan"/>
+			<span class="mtimeSpan"/>
+			<div class="buttons">
+			<a class="preview button" onclick="loadPreview('rightPanel');showDiff(false)">Show Preview…</a>
+			<a class="info button" onclick="setPanelClass('rightPanel', 'fileInfo');showDiff(false)">Show Info…</a>
+			<a class="contents button" onclick="setPanelClass('rightPanel', 'dirContents');showDiff(false);">Show Contents…</a>
+			<a id="diffButton" class="diff button" onclick="showDiff(true);">Show Diff…</a>
+			</div>
+			<a class ="downloadLink"/>
+			</div>
+		</div>
+		
+		<div class="detailsContainer"> <!-- Only one of these subdivs should be visible at any time -->
+			<div class="directoryDetails">
+				<table id="directoryEntriesRight" class="directoryEntries sortable no-arrow">
+					<tr><th class="sortable">Name</th><th class="sortable">Date Modified</th><th class="sortable">Size</th></tr>
+					<tbody class="directoryEntriesBody"/>
+				</table>
+			</div>
+			
+			<div class="fileDetails">
+				<table class="fileDetailsTable"/>
+			</div>
+			
+			<div class="filePreview">
+				<div class="previewContent"/>
+			</div>
+			
+			<div class="loading">
+				Loading…
+			</div>
+			
+			<div class="nosnapshot">
+				Select a snapshot…
+			</div>
+			
+		</div>
+		</div>
+
+	</div>
+
+
+</body>
+</html>
