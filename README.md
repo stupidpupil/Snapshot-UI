@@ -6,6 +6,25 @@ Currently only works on ZFS, and starts in the user's home directory by default.
 
 I make no positive claims as regards the quality of the code…
 
+# Usage
+Run it using `rackup` or `unicorn`, navigate to `http://localhost:8080`.
+Works in Firefox 4 and any modern WebKit-based browser.
+
+
+## Requirements
+* Rack server
+* Base32
+* ActiveSupport
+* Erubis
+* Coderay
+
+### Preview Handlers
+By disabling various preview handlers it's possible avoid these.
+
+* ImageMagick
+* Mplayer
+* Plist gem
+
 ## Known Issues
 * Copes poorly with snapshots disappearing.
 * Very little in the way of sanitizing requests.
