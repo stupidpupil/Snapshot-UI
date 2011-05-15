@@ -1,7 +1,19 @@
 # Snapshot UI
 Rack App intended to help navigating a snapshotting filesystem.
+It includes a two-pane view, checking for differences between snapshots to produce 'versions' and presenting diffs of plain text files between snapshots.
 
 Currently only works on ZFS, and starts in the user's home directory by default.
+
+I make no positive claims as regards the quality of the code…
+
+## Known Issues
+* Copes poorly with snapshots disappearing.
+* Very little in the way of sanitizing requests.
+
+## Future Development
+* Continued attempts to make the code less awful.
+* Support for diffing directories and image files.
+* Support for diffing files with a sensible textual representation.
 
 ## License
 Copyright (C) 2010 Adam Watkins
