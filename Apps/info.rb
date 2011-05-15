@@ -45,7 +45,7 @@ def infoAppWithHelper(helper)
     path = reqHash[:path]
     
     snapshots = helper.snapshotsForPath(path)
-    return [404, {"Content-Type" => "application/json"}, ["No snapshots found for path."]] if snapshots.length == 0
+    return [404, {"Content-Type" => "text/plain"}, ["No snapshots found for path."]] if snapshots.length == 0
     
     snapshot = snapshots.find {|x| x.snapId == reqHash[:snapshot]}
 

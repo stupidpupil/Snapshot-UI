@@ -7,10 +7,10 @@ def downloadAppWithHelper(helper)
     snapshot = hash[:snapshot]
 
     snapshots = helper.snapshotsForPath(path)
-    return [404, {"Content-Type" => "application/json"}, ["No snapshots found for path."]] if snapshots.length == 0
+    return [404, {"Content-Type" => "text/plain"}, ["No snapshots found for path."]] if snapshots.length == 0
     
     snapshot = snapshots.find {|x| x.snapId == hash[:snapshot]}
-    return [410, {"Content-Type" => "application/json"}, ["Path does not exist in snapshot."]] if snapshot.nil?
+    return [410, {"Content-Type" => "text/plain"}, ["Path does not exist in snapshot."]] if snapshot.nil?
 
     absolutePath = helper.absPathForRelPathAndSnapshot(path, snapshot)
     

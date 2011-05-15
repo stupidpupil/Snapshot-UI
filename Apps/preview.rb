@@ -6,10 +6,10 @@ def previewAppWithHelper(helper)
       path = reqHash[:path]
             
       snapshots = helper.snapshotsForPath(path)
-      return [404, {"Content-Type" => "plain/text"}, ["No snapshots found for path."]] if snapshots.length == 0
+      return [404, {"Content-Type" => "text/plain"}, ["No snapshots found for path."]] if snapshots.length == 0
       
       snapshot = snapshots.find {|x| x.snapId == reqHash[:snapshot]}
-      return [410, {"Content-Type" => "plain/text"}, ["Path does not exist in snapshot."]] if snapshot.nil?
+      return [410, {"Content-Type" => "text/plain"}, ["Path does not exist in snapshot."]] if snapshot.nil?
     
     return previewHandler(path, snapshot, helper)
   end
