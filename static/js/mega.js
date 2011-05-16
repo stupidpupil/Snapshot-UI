@@ -431,7 +431,7 @@ function animateRightPanel(show) {
 function resize() {
 	//Not great
     gPanels.rightPanel.style.right = gShowingRightPanel ? 0 : - Math.floor(window.innerWidth / 2) + "px";
-    gPanels.rightPanel.sidebar.style.right = gShowingRightPanel ? 0 : -202 + "px";
+    gPanels.rightPanel.sidebar.style.right = gShowingRightPanel ? 0 : (gPanels.leftPanel.sidebar.offsetWidth + 1) + "px";
     
 	setWidths();
     setHeights();
