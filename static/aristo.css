@@ -15,7 +15,7 @@ body{
 	-webkit-box-shadow: 0px 3px 5px #555;
 	-moz-box-shadow: 0px 3px 5px #555;
 	box-shadow: 0px 3px 5px #555;
-	font-size:13px;
+	font-size:1.1em;
 }
 
 .sheet a{
@@ -46,12 +46,6 @@ body{
 .sheet li{
 	list-style-type: none;
 	padding:2px 0px 0px 0px;
-}
-
-.sheet .button{
-	float:right;
-	margin: 5px 5px 5px 5px;
-
 }
 
 #errorSheet h2{
@@ -100,13 +94,6 @@ body{
 	border-top: 1px solid #444;
 }
 
-#header h1 {
-	display: block;
-	font-weight:bold;
-	float: left;
-	cursor:pointer;
-}
-
 .headerButton img{
 	margin:3px;
 }
@@ -138,7 +125,6 @@ body{
 */
 
 .directoryEntries{
-	  border-collapse: collapse;
 	  	border-bottom: 1px solid #acacac;
 }
 .directoryEntries th {
@@ -200,25 +186,21 @@ td.document{
 */
 
 #pathComponents{
-	
-	border:none;
 	background: #ddd;
 	background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#c4c4c4));
 	background: -moz-linear-gradient(top, #ededed, #c4c4c4);
-	border-bottom:1px solid #444;
-	border-top:1px solid #444;
-
+	border-color:#444;
 }
 
 #pathComponents a {
-	border:none;
+	border-left:none;
+	border-color:#acacac;
 	font-weight: bold;
 	color: #4f4f4f;
 	text-shadow: 0 1px 1px #fff;
 	background: #ddd;
 	background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#c4c4c4));
 	background: -moz-linear-gradient(top, #ededed, #c4c4c4);
-	border-right: 1px solid #acacac;
 	box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
 	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
 	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
@@ -227,8 +209,8 @@ td.document{
 
 
 #pathComponents a:first-of-type{
-	border-left: 1px solid #acacac;
-
+	border-left-width: 1px;
+	border-left-style:solid;
 }
 
 #pathComponents a:active{
@@ -257,23 +239,20 @@ td.document{
 
 .sidebar{
 	background-color: #dde4ec;
-	font-size:12px;
 }
 
 .sidebar h2{
 	color: #5c5c6e;
+	text-align:left;
 	text-indent: 15px;
 	text-transform: uppercase;
-	font-size:1em;
 	margin:10px 0px 2px 0px
 }
 
 .sidebar .snapshots a{
 	color: #030303;
 	padding: 2px 0px 3px 0px;
-	text-indent: 25px;
 	cursor: pointer;
-	
 }
 
 
@@ -303,9 +282,12 @@ td.document{
 */
 
 .infoBox{
-	font-size:14px;
-	border-bottom: 1px solid #acacac;
+	font-size:1.15em;
 	min-height:67px;
+}
+
+.infoBox, #diffContainer{
+	border-color:#acacac;
 }
 
 
@@ -323,12 +305,7 @@ td.document{
 	background: url(/static/img/previewable32.png) no-repeat scroll 8px 16px;
 }
 
-.infoBox .buttons{
-	margin:2px 0px;
-}
-
 .infoBox .filenameSpan{
-	font-weight:bold;
 	padding-bottom:2px;
 }
 
@@ -338,11 +315,6 @@ td.document{
 
 
 .infoBox .downloadLink{
-	position:absolute;
-	top: 5px;
-	right: 20px;
-	height:32px;
-	width:32px;
 	border-radius:5px;
 	border: 2px solid #aaa;
 	cursor:pointer;
@@ -357,58 +329,41 @@ td.document{
 
 /* Panels */
 
-#leftPanel .sidebar {
-	border-right: 1px solid #b3b3b3;
-}
-
 #rightPanel {
-	border-left: 1px solid #666;
+	border-color:#666;
 }
 
-#rightPanel .sidebar {
-	border-left: 1px solid #b3b3b3;
+#leftPanel .sidebar, #rightPanel .sidebar {
+	border-color: #b3b3b3;
 }
 
 
-.panel.filePreview .detailsContainer{
-	background-color:#222;	
+.panel.filePreview .detailsContainer,
+.previewContent,
+#diffContainer
+{
+	color:white;
+	background-color:#222;
+	font-size:1.05em;
 }
 
 .previewContent{
 	padding:10px;
-	color:white;
-	background-color:#222;	
 }
 
 .panel .detailsContainer .loading,
 .panel .detailsContainer .nosnapshot{
-	font-size:16px;
+	font-size:1.3em;
 	color:#5c5c6e;
 	padding: 20px;
 }
 
-.fileDetails{
-	padding:8px;
-	font-size:13px;
-}
-
 .fileDetails td:nth-of-type(1){
 	font-weight:bold;
-	text-align: right;
-	padding-right:8px;
-}
-
-.fileDetails td:nth-of-type(1):after{
-	content: ":";
 }
 
 /* Diff */
 
-#diffContainer{
-	background-color:#222;
-	color:white;
-	border-top: 1px solid #acacac;
-}
 
 #diffContainer span.info{
 	width:100%;
@@ -442,6 +397,7 @@ a.button {
 	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
 	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
 	cursor: pointer;
+	padding: .15em 1em;
 }
 
 a.button:active {
