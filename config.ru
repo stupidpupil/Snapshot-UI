@@ -14,12 +14,12 @@ require 'Metadata/mimetype.rb'
 require 'Previews/PreviewHandler.rb'
 require 'Diffs/DiffHandler.rb'
 
-require 'Apps/about.rb'
-require 'Apps/info.rb'
-require 'Apps/versions.rb'
-require 'Apps/diff.rb'
-require 'Apps/download.rb'
-require 'Apps/preview.rb'
+require 'AppFactory/init.rb'
+require 'AppFactory/info.rb'
+require 'AppFactory/versions.rb'
+require 'AppFactory/diff.rb'
+require 'AppFactory/download.rb'
+require 'AppFactory/preview.rb'
 
 use Rack::Reloader, 0
 use Rack::ConditionalGet
@@ -31,6 +31,32 @@ use Rack::Deflater
 #
 
 helper = ZFSSnapshotHelper.new(File.expand_path("~"))
+
+appFactory = SPSnapshot::UIAppFactory.new(helper)
+
+map '/about' do
+  run appFactory.aboutApp
+end
+
+map '/snapshots' do
+  run appFactory.versionsApp
+end
+
+map '/info' do
+  run appFactory.infoApp
+end
+
+map '/preview' do
+  run appFactory.previewApp
+end
+
+map '/diff' do
+  run appFactory.diffApp
+end
+
+map '/download' do
+  run appFactory.downloadApp
+end
 
 #
 #
@@ -50,12 +76,6 @@ indexApp = proc do |env|
   return [200, {"Content-Type" => "application/xhtml+xml"}, [File.open("static/index.xhtml").read]]
 end
 
-versionsApp = versionsAppWithHelper(helper)
-infoApp = infoAppWithHelper(helper)
-previewApp = previewAppWithHelper(helper)
-diffApp = diffAppWithHelper(helper)
-downloadApp = downloadAppWithHelper(helper)
-aboutApp = aboutServerAppWith(helper)
 
 map '/static' do
   run staticApp
@@ -69,30 +89,6 @@ map '/link' do
   run indexApp
 end
 
-map '/about' do
-  run aboutApp
-end
-
-map '/snapshots' do
-  run versionsApp
-end
-
-map '/info' do
-  run infoApp
-end
-
-map '/preview' do
-  run previewApp
-end
-
-map '/diff' do
-  run diffApp
-end
-
 map '/decrypt' do
   run decryptApp
-end
-
-map '/download' do
-  run downloadApp
 end

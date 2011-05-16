@@ -1,4 +1,8 @@
-def infoHashFor(path, snapshot, helper)
+module SPSnapshot
+  class UIAppFactory
+
+
+def infoHashFor(path, snapshot)
   retHash = {}
   retHash[:link] = generateLinkIdFor(path, snapshot.snapId)
   retHash[:filename] = File.basename(path)
@@ -38,8 +42,10 @@ def infoHashFor(path, snapshot, helper)
   
 end
 
-def infoAppWithHelper(helper)
+def infoApp
   return proc do |env|  
+    
+    
     req = Rack::Request.new(env)
     reqHash = requestToHash(req)
     path = reqHash[:path]
@@ -52,7 +58,7 @@ def infoAppWithHelper(helper)
     if snapshot.nil?
       retHash = {:info => nil}
     else
-      retHash = {:info => infoHashFor(path, snapshot,helper)}
+      retHash = {:info => infoHashFor(path, snapshot)}
     end
     
     if(reqHash[:snapshot2])
@@ -60,7 +66,7 @@ def infoAppWithHelper(helper)
       if snapshot2.nil?
         retHash[:info2] = nil
       else
-        retHash[:info2] = infoHashFor(path, snapshot2,helper)
+        retHash[:info2] = infoHashFor(path, snapshot2)
       end 
     end
     
@@ -72,4 +78,7 @@ def infoAppWithHelper(helper)
     
   end
 
+end
+
+end
 end
