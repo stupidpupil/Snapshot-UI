@@ -17,9 +17,9 @@ def canDiff(relativePath, snapshot1, snapshot2, helper)
   #Does that handler believe it can diff?
   
     
-  return false if mimetypeForPath(helper.absPathForRelPathAndSnapshot(relativePath, snapshot1)) != mimetypeForPath(helper.absPathForRelPathAndSnapshot(relativePath, snapshot2))
+  return false if MIME::Types.type_for_path(helper.absPathForRelPathAndSnapshot(relativePath, snapshot1)) != MIME::Types.type_for_path(helper.absPathForRelPathAndSnapshot(relativePath, snapshot2))
   
-  mime = mimetypeForPath(helper.absPathForRelPathAndSnapshot(relativePath, snapshot2))
+  mime = MIME::Types.type_for_path(helper.absPathForRelPathAndSnapshot(relativePath, snapshot2))[0].to_s
   
   return true if $diffHandlers.has_key?(mime) and $diffHandlers[mime].canDiff(relativePath, snapshot1, snapshot2, helper)
   return false

@@ -10,7 +10,7 @@ require "SnapshotModule/ZFSSnapshotHelper.rb"
 
 require 'LinkIDs.rb'
 
-require 'Metadata/mimetype.rb'
+require 'MIMEAndFile.rb'
 require 'Previews/PreviewHandler.rb'
 require 'Diffs/DiffHandler.rb'
 

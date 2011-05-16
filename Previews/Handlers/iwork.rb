@@ -25,6 +25,9 @@ end
 $handlers["application/x-iwork-pages-sffpages"] = IWorkPreviewer
 $handlers["application/x-iwork-keynote-sffkey"] = IWorkPreviewer
 
+MIME::Type.new("application/x-iwork-pages-sffpages") {|t| t.extensions = "pages"; MIME::Types.add(t)}
+MIME::Type.new("application/x-iwork-keynote-sffkey") {|t| t.extensions = "key"; MIME::Types.add(t)}
+
 
 class GrafflePreviewer < PreviewHandler
   
@@ -48,3 +51,6 @@ class GrafflePreviewer < PreviewHandler
   return "<span class=\"previewError\"> Unable to generate preview.</span>" 
 end
 end
+
+$handlers["application/x-graffle"] = GrafflePreviewer
+MIME::Type.new("application/x-graffle") {|t| t.extensions = "graffle"; MIME::Types.add(t)}

@@ -2,7 +2,7 @@ require 'coderay'
 
 class CodeRayPreviewer < PreviewHandler
   def self.previewForPath(absolutePath)
-    mimetype = mimetypeForPath(absolutePath)
+    mimetype = MIME::Types.type_for_path(absolutePath)[0].to_s
     mm = {"application/x-ruby" => :ruby, "text/x-ruby" => :ruby, "application/javascript" => :javascript, "text/css" => :css, "text/x-c" => :c, "application/xhtml+xml" => :xhtml, "application/xml" => :xml}
     return CodeRay.scan(File.new(absolutePath).read.to_s, mm[mimetype]).div(:css => :class)
   end

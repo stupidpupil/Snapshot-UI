@@ -23,7 +23,7 @@ def infoHashFor(path, snapshot)
         hash[:size] = File.size(entryPath)
       end
       
-      hash[:folder] = isFolder?(entryPath)
+      hash[:folder] = File.isFolder?(entryPath)
       
       hash[:mtime] = File.mtime(entryPath).to_i
       entries << hash
@@ -31,12 +31,12 @@ def infoHashFor(path, snapshot)
   end
   
   retHash[:entries] = entries 
-  retHash[:kind] = kindForPath(absolutePath)
-  retHash[:mimetype] = mimetypeForPath(absolutePath)
+  retHash[:kind] = File.kind(absolutePath)
+  retHash[:mimetype] = MIME::Types.type_for_path(absolutePath)[0].to_s
   retHash[:preview] = canPreview(absolutePath)  
   retHash[:ctime] = File.ctime(absolutePath).to_i
   retHash[:mtime] = File.mtime(absolutePath).to_i
-  retHash[:size] = (mimetypeForPath(absolutePath) == "application/x-directory" ? nil : File.size(absolutePath))
+  retHash[:size] = (File.isFolder?(absolutePath) ? nil : File.size(absolutePath))
   
   return retHash
   

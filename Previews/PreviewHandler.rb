@@ -6,15 +6,19 @@ def previewHandler(path, snapshot, helper)
   eruby = Erubis::Eruby.new(File.read("Previews/Preview.rxhtml"))
   
     actualPath = helper.absPathForRelPathAndSnapshot(path, snapshot)
+    
+    mimetype = MIME::Types.type_for_path(actualPath)[0].to_s
   
-    context = {:previewContent => $handlers[mimetypeForPath(actualPath)].previewForPath(actualPath)}
+    context = {:previewContent => $handlers[mimetype].previewForPath(actualPath)}
   
   return [200, {"Content-Type" => "application/xhtml+xml","Cache-Control" => "private, max-age=600"}, [eruby.evaluate(context)]]
 
 end
 
 def canPreview(actualPath)
-  return true if $handlers.has_key?(mimetypeForPath(actualPath)) and $handlers[mimetypeForPath(actualPath)].canPreviewPath(actualPath)
+  mimetype = MIME::Types.type_for_path(actualPath)[0].to_s
+  
+  return true if $handlers.has_key?(mimetype) and $handlers[mimetype].canPreviewPath(actualPath)
   return false
 end
 
