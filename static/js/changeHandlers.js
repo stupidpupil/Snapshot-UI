@@ -20,6 +20,7 @@ function changePath(newPath) {
     for (i = 0; i < gPanelArr.length; i++) {
         setPanelClass(gPanelArr[i], "loading");
         gPanels[gPanelArr[i]]["infoBox"].className = "infoBox loading";
+
         snapDiv = gPanels[gPanelArr[i]]["snapshots"];
         deleteChildren(snapDiv);
         h2 = document.createElement("h2");
@@ -27,6 +28,7 @@ function changePath(newPath) {
         h2.appendChild(document.createTextNode("Loading…"));
         snapDiv.appendChild(h2);
     }
+
     showDiff(false);
     gPath = newPath;
     showingPreview = false;

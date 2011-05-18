@@ -64,7 +64,7 @@ function loadSnapshots() {
             });
         }
 
-        function failureSnapshots(id, o, args) {
+        function failureSnapshots(id, response, args) {
 			showError("Error loading snapshots!", "Status:" + response.status + ", Text:" + response.text);
         }
 
@@ -119,7 +119,13 @@ function loadVersions() {
             });
         }
 
-        function failureVersions(id, o, args) {
+        function failureVersions(id, response, args) {
+			var i;
+		    for (i = 0; i < gPanelArr.length; i++) {
+		        var expression = "//xhtml:div[@id='" + gPanelArr[i] + "']//xhtml:div[@class='snapshots']/xhtml:h2";
+		        var xpathResult = document.evaluate(expression, document, NSResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+		        xpathResult.singleNodeValue.textContent = "Snapshots";
+		    } //FFS
 			showError("Error loading versions!", "Status:" + response.status + ", Text:" + response.text);
         }
 

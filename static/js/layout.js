@@ -28,6 +28,8 @@ function orderSheetOut(sheetID, bool) {
     });
 }
 
+/* Right Panel */
+
 function showRightPanel(bool, load) {
     gShowingRightPanel = bool;
     if (bool === true) {
@@ -43,17 +45,6 @@ function showRightPanel(bool, load) {
     animateRightPanel(bool);
 }
 
-function showDiff(bool) {
-    gShowingDiff = bool;
-    if (bool === true) {
-        loadDiff();
-        document.getElementById("diffContainer").style.display = "block";
-        document.getElementsByTagName("body")[0].className = "diff";
-    } else {
-        document.getElementsByTagName("body")[0].className = "";
-        document.getElementById("diffContainer").style.display = "none";
-    }
-}
 
 function animateRightPanel(show) {
     YUI().use('anim', function (Y) {
@@ -93,6 +84,20 @@ function animateRightPanel(show) {
         anim1.run();
         anim2.run();
     });
+}
+
+/* */
+
+function showDiff(bool) {
+    gShowingDiff = bool;
+    if (bool === true) {
+        loadDiff();
+        document.getElementById("diffContainer").style.display = "block";
+        document.getElementsByTagName("body")[0].className = "diff";
+    } else {
+        document.getElementsByTagName("body")[0].className = "";
+        document.getElementById("diffContainer").style.display = "none";
+    }
 }
 
 /* Resizing */

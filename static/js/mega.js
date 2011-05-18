@@ -214,6 +214,7 @@ function changePath(newPath) {
     for (i = 0; i < gPanelArr.length; i++) {
         setPanelClass(gPanelArr[i], "loading");
         gPanels[gPanelArr[i]]["infoBox"].className = "infoBox loading";
+
         snapDiv = gPanels[gPanelArr[i]]["snapshots"];
         deleteChildren(snapDiv);
         h2 = document.createElement("h2");
@@ -221,6 +222,7 @@ function changePath(newPath) {
         h2.appendChild(document.createTextNode("Loading…"));
         snapDiv.appendChild(h2);
     }
+
     showDiff(false);
     gPath = newPath;
     showingPreview = false;
@@ -359,6 +361,8 @@ function orderSheetOut(sheetID, bool) {
     });
 }
 
+/* Right Panel */
+
 function showRightPanel(bool, load) {
     gShowingRightPanel = bool;
     if (bool === true) {
@@ -374,17 +378,6 @@ function showRightPanel(bool, load) {
     animateRightPanel(bool);
 }
 
-function showDiff(bool) {
-    gShowingDiff = bool;
-    if (bool === true) {
-        loadDiff();
-        document.getElementById("diffContainer").style.display = "block";
-        document.getElementsByTagName("body")[0].className = "diff";
-    } else {
-        document.getElementsByTagName("body")[0].className = "";
-        document.getElementById("diffContainer").style.display = "none";
-    }
-}
 
 function animateRightPanel(show) {
     YUI().use('anim', function (Y) {
@@ -424,6 +417,20 @@ function animateRightPanel(show) {
         anim1.run();
         anim2.run();
     });
+}
+
+/* */
+
+function showDiff(bool) {
+    gShowingDiff = bool;
+    if (bool === true) {
+        loadDiff();
+        document.getElementById("diffContainer").style.display = "block";
+        document.getElementsByTagName("body")[0].className = "diff";
+    } else {
+        document.getElementsByTagName("body")[0].className = "";
+        document.getElementById("diffContainer").style.display = "none";
+    }
 }
 
 /* Resizing */
@@ -907,7 +914,7 @@ function loadSnapshots() {
             });
         }
 
-        function failureSnapshots(id, o, args) {
+        function failureSnapshots(id, response, args) {
 			showError("Error loading snapshots!", "Status:" + response.status + ", Text:" + response.text);
         }
 
@@ -962,7 +969,13 @@ function loadVersions() {
             });
         }
 
-        function failureVersions(id, o, args) {
+        function failureVersions(id, response, args) {
+			var i;
+		    for (i = 0; i < gPanelArr.length; i++) {
+		        var expression = "//xhtml:div[@id='" + gPanelArr[i] + "']//xhtml:div[@class='snapshots']/xhtml:h2";
+		        var xpathResult = document.evaluate(expression, document, NSResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+		        xpathResult.singleNodeValue.textContent = "Snapshots";
+		    } //FFS
 			showError("Error loading versions!", "Status:" + response.status + ", Text:" + response.text);
         }
 
