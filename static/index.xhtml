@@ -6,7 +6,6 @@
 <head>
 	
 	
-	
 	<link rel="icon" type="image/png" href="/static/img/logo.png"/>
 
 	<link rel="stylesheet" href="/static/layout.css" type="text/css" />
@@ -102,6 +101,9 @@
 		<div class="detailsContainer"> <!-- Only one of these subdivs should be visible at any time -->
 			<div class="directoryDetails">
 				<table id="directoryEntriesLeft" class="directoryEntries sortable no-arrow">
+					<col class="name"/>
+					<col class="mtime"/>
+					<col class="size"/>					
 					<tr><th class="sortable">Name</th><th class="sortable">Date Modified</th><th class="sortable">Size</th></tr>
 					<tbody class="directoryEntriesBody"/>
 				</table>
@@ -155,6 +157,9 @@
 		<div class="detailsContainer"> <!-- Only one of these subdivs should be visible at any time -->
 			<div class="directoryDetails">
 				<table id="directoryEntriesRight" class="directoryEntries sortable no-arrow">
+					<col class="name"/>
+					<col class="mtime"/>
+					<col class="size"/>
 					<tr><th class="sortable">Name</th><th class="sortable">Date Modified</th><th class="sortable">Size</th></tr>
 					<tbody class="directoryEntriesBody"/>
 				</table>
