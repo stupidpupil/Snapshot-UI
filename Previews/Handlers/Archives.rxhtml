@@ -1,0 +1,9 @@
+<p><%= @entries.length %> items.</p>
+
+<table class="directoryEntries">
+	<tbody class="directoryEntriesBody">
+		<% @entries.each do |entry| %>
+		<tr><td><%= entry[:name]%></td></tr>
+		<% end%>
+	</tbody>
+</table>
