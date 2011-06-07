@@ -8,7 +8,7 @@ function orderSheetOut(sheetID, bool) {
     var sheet = document.getElementById(sheetID);
     var header = document.getElementById("header");
     YUI().use('anim', function (Y) {
-		var shownTop = (header.offsetHeight + gPathComponentsSpan.offsetHeight - 5;
+		var shownTop = (header.offsetHeight + gPathComponentsSpan.offsetHeight - 5);
 		var hiddenTop = -(sheet.offsetHeight);
 	
         var anim1 = new Y.Anim({
