@@ -8,13 +8,16 @@ function orderSheetOut(sheetID, bool) {
     var sheet = document.getElementById(sheetID);
     var header = document.getElementById("header");
     YUI().use('anim', function (Y) {
+		var shownTop = (header.offsetHeight + gPathComponentsSpan.offsetHeight - 5;
+		var hiddenTop = -(sheet.offsetHeight);
+	
         var anim1 = new Y.Anim({
             node: '#' + sheetID,
             from: {
-                top: !bool ? (header.offsetHeight + gPathComponentsSpan.offsetHeight - 5) : -(sheet.offsetHeight)
+                top: !bool ? ) shownTop : hiddenTop
             },
             to: {
-                top: bool ? (header.offsetHeight + gPathComponentsSpan.offsetHeight - 5) : -(sheet.offsetHeight)
+                top: bool ? shownTop : hiddenTop
             },
             duration: 0.25,
             easing: Y.Easing.easeIn
@@ -47,7 +50,7 @@ function showRightPanel(bool, load) {
 
 
 function animateRightPanel(show) {
-    YUI().use('anim', function (Y) {
+    YUI().use('anim', function (Y) {	
         var anim1 = new Y.Anim({
             node: gPanels.rightPanel,
             from: {
