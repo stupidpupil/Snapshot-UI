@@ -2,7 +2,6 @@ require 'mime/types'
 
 DirectoryMimeType = MIME::Type.new("application/x-directory")
 
-
 module MIME
   class Types
     
@@ -15,7 +14,9 @@ module MIME
       
       return [DirectoryMimeType] if File.directory?(path)
       
-      return [MIME::Types["application/octet-stream"]]
+      return [`file -b --mime-type "#{path}"`.strip]
+      
+      #return [MIME::Types["application/octet-stream"]]
       
     end
   end
