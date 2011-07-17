@@ -14,7 +14,7 @@ function orderSheetOut(sheetID, bool) {
         var anim1 = new Y.Anim({
             node: '#' + sheetID,
             from: {
-                top: !bool ? ) shownTop : hiddenTop
+                top: !bool ? shownTop : hiddenTop
             },
             to: {
                 top: bool ? shownTop : hiddenTop

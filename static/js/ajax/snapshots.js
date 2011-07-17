@@ -1,13 +1,13 @@
 function aElemFromSnapshot(panel, snapshot) {
     link = document.createElement("a");
-    link.appendChild(document.createTextNode(snapshot.name));
-    link.snapId = snapshot.snapId;
+    //link.appendChild(document.createTextNode(snapshot.name));
+    link.appendChild(document.createTextNode(humaneDate(snapshot["iso8601"])));
+
+	link.snapId = snapshot.snapId;
     link.addEventListener("click", function () {
         changeSnapshot(panel, snapshot.snapId);
     }, false);
-    if (snapshot.ctime) {
-        link.title = new Date(parseInt(snapshot.ctime, 10) * 1000).toUTCString();
-    }
+
     return link;
 }
 
