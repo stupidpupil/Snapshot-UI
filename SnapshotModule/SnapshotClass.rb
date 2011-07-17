@@ -4,16 +4,16 @@ require "date"
 module SPSnapshot
 
 class Snapshot
-  attr_reader :snapId, :name, :ctime
+  attr_reader :snapId, :name, :time
   
-  def initialize(snapId, name = nil, ctime = nil)
+  def initialize(snapId, name = nil, time = nil)
     @snapId = snapId
     @name = name.nil? ? snapId : name
-    @ctime = ctime
+    @time = time
   end
   
   def as_json(options={})
-    return {:snapId => self.snapId, :name => self.name, :ctime => self.ctime.to_i}
+    return {:snapId => self.snapId, :name => self.name, :iso8601 => (self.time.nil? ? nil : self.time.iso8601)}
   end
   
 end

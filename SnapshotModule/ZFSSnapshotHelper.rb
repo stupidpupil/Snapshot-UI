@@ -21,7 +21,7 @@ class ZFSSnapshotHelper < SPSnapshot::SnapshotHelper
       creation = Time.at(info[0].split("\t")[-2].to_i)
       size = info[1].split("\t")[-2].to_i
       
-      retval << SPSnapshot::Snapshot.new(snapId, prettifySnapshotName(snapId), creation.to_i)
+      retval << SPSnapshot::Snapshot.new(snapId, prettifySnapshotName(snapId), creation)
     end
     
     retval << SPSnapshot::Snapshot.new("@current", "Current", nil)
