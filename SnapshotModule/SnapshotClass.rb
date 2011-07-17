@@ -13,7 +13,7 @@ class Snapshot
   end
   
   def as_json(options={})
-    return {:snapId => self.snapId, :name => self.name, :iso8601 => (self.time.nil? ? nil : self.time.iso8601)}
+    return {:snapId => self.snapId, :name => self.name, :iso8601 => (self.time.nil? ? nil : self.time.utc.iso8601)}
   end
   
 end
