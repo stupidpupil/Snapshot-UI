@@ -17,16 +17,19 @@ def infoHashFor(path, snapshot)
 
     dir.entries.delete_if {|x| x[0..0] == "." }.each do |entry|
       entryPath = absolutePath+"/"+entry
-      hash = {:filename => entry}
-
-      unless File.directory?(entryPath)
-        hash[:size] = File.size(entryPath)
+      
+      if File.exists?(entryPath)
+        hash = {:filename => entry}
+        
+        unless File.directory?(entryPath)
+          hash[:size] = File.size(entryPath)
+        end
+        
+        hash[:folder] = File.isFolder?(entryPath)
+        
+        hash[:mtime] = File.mtime(entryPath).to_i
+        entries << hash
       end
-      
-      hash[:folder] = File.isFolder?(entryPath)
-      
-      hash[:mtime] = File.mtime(entryPath).to_i
-      entries << hash
     end
   end
   
