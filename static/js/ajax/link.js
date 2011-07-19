@@ -15,10 +15,12 @@ function decryptLink(linkID, panel) {
                 } catch (e) {
                     alert("Invalid snapshot info");
                 }
-                gSelectedSnapshot[args[0]] = data.snapshot;
-                if (gSelectedSnapshot.leftPanel && (!gShowingRightPanel || gSelectedSnapshot.rightPanel)) {
+                viewModel.selectedSnapshot[args[0]](data.snapshot);
+                if (viewModel.selectedSnapshot.leftPanel() && (!gShowingRightPanel || viewModel.selectedSnapshot.rightPanel())) {
                     changePath(data.path);
                 }
+				ko.applyBindings(viewModel);
+
             });
         }
 

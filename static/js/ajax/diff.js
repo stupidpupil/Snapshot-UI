@@ -1,4 +1,7 @@
 function loadDiff() {
+	viewModel.detailsVisible['leftPanel']('diff') 
+	viewModel.detailsVisible['rightPanel']('diff') 
+	
     setDiffMessage("Loading…");
 	
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
@@ -7,8 +10,8 @@ function loadDiff() {
             method: "GET",
             data: {
                 "path": gPath,
-                "snapshot": gSelectedSnapshot.leftPanel,
-                "snapshot2": gSelectedSnapshot.rightPanel
+                "snapshot": viewModel.selectedSnapshot.leftPanel(),
+                "snapshot2": viewModel.selectedSnapshot.rightPanel()
             }
         };
 

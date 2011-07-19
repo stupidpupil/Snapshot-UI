@@ -37,13 +37,17 @@ function showRightPanel(bool, load) {
     gShowingRightPanel = bool;
     if (bool === true) {
         if (load) {
-            changeSnapshot('rightPanel', gSelectedSnapshot.leftPanel);
+            changeSnapshot('rightPanel', viewModel.selectedSnapshot.leftPanel());
         }
     } else {
-        if (gSelectedSnapshot.rightPanel) { //HORRIBLE HORRIBLE HACK
-            updateHistory(); //Got to get rid of the last part of the link
+        if (viewModel.selectedSnapshot.rightPanel()) { //HORRIBLE HORRIBLE HACK
+            //updateHistory(); //Got to get rid of the last part of the link
         }
-        showDiff(false);
+		
+		if (viewModel.detailsVisible.leftPanel() == 'diff'){
+			setDetailsViewToDefault('leftPanel')
+		}
+		
     }
     animateRightPanel(bool);
 }
@@ -89,19 +93,6 @@ function animateRightPanel(show) {
     });
 }
 
-/* */
-
-function showDiff(bool) {
-    gShowingDiff = bool;
-    if (bool === true) {
-        loadDiff();
-        document.getElementById("diffContainer").style.display = "block";
-        document.getElementsByTagName("body")[0].className = "diff";
-    } else {
-        document.getElementsByTagName("body")[0].className = "";
-        document.getElementById("diffContainer").style.display = "none";
-    }
-}
 
 /* Resizing */
 
@@ -128,8 +119,7 @@ function setHeights() {
         nodes.detailsContainer.style.height = (panelHeight - nodes.infoBox.offsetHeight) + "px";
     }
 
-    infoBoxHeight = Math.max(
-    gPanels.leftPanel.infoBox.offsetHeight, gPanels.rightPanel.infoBox.offsetHeight);
+    infoBoxHeight = 85 //Math.max(gPanels.leftPanel.infoBox.offsetHeight, gPanels.rightPanel.infoBox.offsetHeight);
     document.getElementById("diffContainer").style.height = panelHeight - (infoBoxHeight - 3) + "px";
 }
 
@@ -160,4 +150,6 @@ function setWidths() {
     if (leftSideCol) {
         leftSideCol.style.width = leftNotSideBarWidth - 35 + "px";
     }
+
+
 }

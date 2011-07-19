@@ -15,18 +15,17 @@ function initialize() {
     }
 
 	gShowingRightPanel = false
-	gShowingDiff = false
-	gSelectedSnapshot = []
-	gSelectedSnapshotName = []
-	gSnapshots = []
 	gPathInfo = []
 	
-    
 	resize();
 	window.addEventListener('resize', resize, false);
 	
+	
     loadAbout();
 	window.addEventListener('popstate', parseLocation, false);
+	
+	
+	
 }
 
 window.addEventListener('pageshow', initialize, false);

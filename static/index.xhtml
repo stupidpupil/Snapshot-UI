@@ -9,13 +9,193 @@
 	<link rel="icon" type="image/png" href="/static/img/logo.png"/>
 
 	<link rel="stylesheet" href="/static/layout.css" type="text/css" />
-	<link rel="stylesheet" href="/static/visibility.css" type="text/css" />
 	<link rel="stylesheet" href="/static/aristo.css" type="text/css" />
 	<link rel="stylesheet" href="/static/coderay.css" type="text/css" />
 		
 
-	<script type="text/ecmascript" src="/static/js/mega.js"></script>
+	<script type="text/ecmascript" src="/static/js/3rd/humanedates.js"></script>
+	                                            
+	<script type="text/ecmascript" src="/static/js/3rd/jquery.js"></script>
+	<script type="text/ecmascript" src="/static/js/3rd/jquery.tmpl.js"></script>
+	<script type="text/ecmascript" src="/static/js/3rd/knockout.js"></script>
+
+	<script type="text/ecmascript" src="/static/js/3rd/tablesort.js"></script>
+                                                
+	<script type="text/ecmascript" src="/static/js/3rd/yui.js"></script>
+
+	<script type="text/ecmascript" src="/static/js/ajax/about.js"></script>
+	<script type="text/ecmascript" src="/static/js/ajax/diff.js"></script>
+	<script type="text/ecmascript" src="/static/js/ajax/info.js"></script>
+	<script type="text/ecmascript" src="/static/js/ajax/link.js"></script>
+	<script type="text/ecmascript" src="/static/js/ajax/preview.js"></script>
+	<script type="text/ecmascript" src="/static/js/ajax/snapshots.js"></script>
+
+	<script type="text/ecmascript" src="/static/js/changeHandlers.js"></script>
+	<script type="text/ecmascript" src="/static/js/helpers.js"></script>
+	<script type="text/ecmascript" src="/static/js/initialize.js"></script>
+	<script type="text/ecmascript" src="/static/js/layout.js"></script>
+	
+	
+	
+	<script type="text/javascript">
+	<![CDATA[	
+	
+	    var viewModel = {
+	        snapshots : ko.observableArray([]),
+	        versions : ko.observableArray([]),
+			selectedSnapshot : {"leftPanel" : ko.observable(), "rightPanel" : ko.observable()},
+			entries : {"leftPanel" : ko.observableArray([]), "rightPanel" : ko.observableArray([])},
+			info : {"leftPanel" : ko.observable(), "rightPanel" : ko.observable()},
+			detailsVisible : {"leftPanel" : ko.observable(), "rightPanel" : ko.observable()},
+			diffable : ko.observable(),
+			needsSnapshotSelection : {"leftPanel" : ko.observable(), "rightPanel" : ko.observable()},
+			showSnapshotsAs : ko.observable()
+	    };
+	
+		ko.bindingHandlers['fadeInVisible'] = {
+
+		    'update': function(element, valueAccessor) {
+				if(valueAccessor()()){
+		        	$(element).fadeIn(300);
+				}else{
+		        	$(element).hide();
+				}
+
+		    }
+
+		};
+	
+		//
+		//	Ensures that we don't leave the other detailsView in 'diff' mode if one changes
+		//
 		
+		viewModel.detailsVisible.leftPanel.subscribe(function(newValue){
+			if(newValue != 'diff'){
+				if (viewModel.detailsVisible.rightPanel() == 'diff'){
+					setDetailsViewToDefault('rightPanel')
+				}
+			}
+		})
+		
+		viewModel.detailsVisible.rightPanel.subscribe(function(newValue){
+			if(newValue != 'diff'){
+				if (viewModel.detailsVisible.leftPanel() == 'diff'){
+					setDetailsViewToDefault('leftPanel')
+				}
+			}
+		})
+	
+		function refreshLeftPanelSort(){
+			refreshSortingForPanel("leftPanel")
+		}
+		
+		function refreshRightPanelSort(){
+			refreshSortingForPanel("rightPanel")
+		}
+	
+		function refreshSortingForPanel(panelId){
+				fdTableSort.prepareTableData(getElementForPanelAndClass(panelId, "directoryEntriesBody").parentNode);
+	    		fdTableSort.jsWrapper(getElementForPanelAndClass(panelId, "directoryEntriesBody").parentNode.id, 0);
+		}
+		]]>
+		
+	</script>
+	
+	
+	<!-- infoBox Template -->
+	<script type="application/xhtml+xml" id="infoTemplate">
+	<![CDATA[	
+	
+		<div class="innerDiv" data-bind="css: {directory: mimetype == 'application/x-directory', file: mimetype != 'application/x-directory', previewable:preview}">
+		<span class="filenameSpan" data-bind="text:filename"></span>
+		<span class="mtimeSpan">${mtime.toUTCString()}</span>
+		<div class="buttons">
+		<a class="button" data-bind="click: function () {loadPreview($item.panel)}, visible: (preview && $item.detailsVisible() != 'preview')" >Show Preview…</a>
+		<a class="button" data-bind="click: function() {viewModel.detailsVisible[$item.panel]('info')}, visible: $item.detailsVisible() != 'info'">Show Info…</a>
+		<a class="button" data-bind="click: function() {viewModel.detailsVisible[$item.panel]('entries')}, visible: (mimetype == 'application/x-directory' && $item.detailsVisible() != 'entries')">Show Contents…</a>				
+
+		{{if $item.panel == 'rightPanel' && $item.diffable}}
+		<a class="button" data-bind="click: function() {loadDiff()}, visible: viewModel.detailsVisible[$item.panel]() != 'diff'">Show Diff…</a>				
+		{{/if}}
+		</div>
+		<a class ="downloadLink" href="/download/${link}"/>
+		</div>
+		
+		]]>
+		
+	</script>
+	
+	
+	<!-- Details Templates -->
+	
+	<script type="application/xhtml+xml" id="detailsTemplate">
+	<![CDATA[	
+		<tr>
+			<td>Kind</td>
+			<td data-bind="text:kind"></td>
+		</tr>
+		
+		<tr>
+			<td>Size</td>
+			<td data-bind="text:bytesToSize(parseInt(size, 10)) + ' (' + size + ' bytes)'"></td>
+		</tr>
+		
+		
+		
+	]]>
+	</script>
+	
+	<!-- Entries Templates -->
+	
+	<script type="application/xhtml+xml" id="entryTemplate">
+	<![CDATA[	
+		<tr data-bind="click: function() { changePath(gPath + '/' + filename);}">
+			<td data-bind="css:{folder:folder, document:!folder}, text:filename"></td>
+			<td>${mtime.toUTCString()}</td>
+			<td>{{if size}}${bytesToSize(parseInt(size, 10))}{{else}}--{{/if}}</td>
+		</tr>
+	]]>
+	</script>
+	
+	<!-- Sidebar Templates -->
+	
+	<script type="application/xhtml+xml" id="sidebarTemplate">
+	<![CDATA[	
+		{{if $item.snapshots().length == 0}}
+			<h2>Loading…</h2>
+		{{else}}
+			{{if $item.versions().length == 0}}
+				<div class="snapshots" data-bind="template: {name: 'snapshotsTemplate', templateOptions:{selectedID: $item.selectedSnapshot[$item.panel], panel:$item.panel}, data:$item.snapshots}"></div>        	
+			{{else}}
+				<div class="snapshots" data-bind="template: {name: 'versionTemplate', templateOptions:{selectedID: $item.selectedSnapshot[$item.panel], panel:$item.panel}, foreach:$item.versions}"></div>        
+			{{/if}}
+		{{/if}}
+	]]>
+	</script>
+	
+	<script type="application/xhtml+xml" id="snapshotsTemplate">
+		<![CDATA[
+			<h2>Snapshots</h2>
+				<div class="snapshots" data-bind="template: {name: 'snapshotTemplate', templateOptions:{selectedID: $item.selectedID, panel:$item.panel}, afterAdd:refreshLeftPanelSort, foreach:$data}"></div>        
+		]]>
+	</script>
+	
+	
+	<script type="application/xhtml+xml" id="snapshotTemplate">
+		<![CDATA[
+	    <a data-bind="css: { selected: snapId === $item.selectedID() }, click: function() { changeSnapshot($item.panel, snapId);}, text: viewModel.showSnapshotsAs() == 'date' ? humaneDate(iso8601) : name"></a>	
+		]]>
+	</script>
+	
+	<script type="application/xhtml+xml" id="versionTemplate">
+		<![CDATA[
+		<h2>Version ${i}</h2>
+			<div class="snapshots" data-bind="template: {name: 'snapshotTemplate', templateOptions:{selectedID: $item.selectedID, panel:$item.panel}, foreach:$data}"></div>        
+		]]>
+	</script>
+	
+	<!-- Panel template -->
+	
 </head>
 
 <body>
@@ -23,14 +203,14 @@
 		<h1 id="serverName">
 		Snapshot WebUI
 		</h1>
-		<div id="rightHandHeader">
+		<div id="rightHandHeader" >
 			
 			<a class="headerButton" onclick="showRightPanel(!gShowingRightPanel, true);">
 				<img id="splitPaneButton" src="/static/img/twoPane.png" title="Toggle Splitpane View"/>
 			</a>
 			
 			<a class="headerButton" onclick="orderSheetOut('aboutSheet', true)">
-				<img  src="/static/img/about.png" title="Show About…"/>
+				<img src="/static/img/about.png" title="Show About…"/>
 			</a>
 						
 		</div>
@@ -71,7 +251,7 @@
 		
 	</div>
 	
-	<div id="diffContainer">
+	<div id="diffContainer" data-bind="visible: (detailsVisible['leftPanel']() == 'diff' &amp;&amp; detailsVisible['rightPanel']() == 'diff' &amp;&amp; diffable)">
 		<div id="diffContent"/>
 	</div>
 	
@@ -81,113 +261,93 @@
 	
 	<div id="leftPanel" class="panel">
 		
-		<div class="sidebar">
-			<div class="snapshots">
-			</div>
+
+		<div class="sidebar" data-bind="template: {name: 'sidebarTemplate', templateOptions:{panel:'leftPanel', snapshots:snapshots, versions:versions, selectedSnapshot:selectedSnapshot}}">
+
 		</div>
 		
 		<div class="notSidebar">
-			<div class="infoBox loading">
-				<div class="innerDiv">
-				<span class="filenameSpan"/>
-				<span class="mtimeSpan"/>
-				<div class="buttons">
-				<a class="preview button" onclick="loadPreview('leftPanel');showDiff(false)">Show Preview…</a>
-				<a class="info button" onclick="setPanelClass('leftPanel', 'fileInfo');showDiff(false)">Show Info…</a>
-				<a class="contents button" onclick="setPanelClass('leftPanel', 'dirContents');showDiff(false);">Show Contents…</a>				
-				</div>
-				<a class ="downloadLink"/>
-				</div>
-			</div>
+			
+			<div data-bind="fadeInVisible: info['leftPanel']">
+				<div class="infoBox" data-bind="template: {name: 'infoTemplate', data: info['leftPanel'], templateOptions:{panel:'leftPanel', detailsVisible:detailsVisible['leftPanel']}}">	</div>
 		
-		<div class="detailsContainer"> <!-- Only one of these subdivs should be visible at any time -->
-			<div class="directoryDetails">
-				<table id="directoryEntriesLeft" class="directoryEntries sortable no-arrow">
-					<col class="name"/>
-					<col class="mtime"/>
-					<col class="size"/>					
-					<tr><th class="sortable">Name</th><th class="sortable">Date Modified</th><th class="sortable">Size</th></tr>
-					<tbody class="directoryEntriesBody"/>
-				</table>
+				<div class="detailsContainer"> <!-- Only one of these subdivs should be visible at any time -->
+					
+					<div class="directoryDetails" data-bind="visible: detailsVisible['leftPanel']() == 'entries'">
+						<table id="directoryEntriesLeft" class="directoryEntries sortable no-arrow">
+							<col class="name"/>
+							<col class="mtime"/>
+							<col class="size"/>					
+							<tr><th class="sortable">Name</th><th class="sortable">Date Modified</th><th class="sortable">Size</th></tr>
+							<tbody class="directoryEntriesBody" data-bind="template: {name:'entryTemplate', foreach: entries['leftPanel'], templateOptions:{currentPath:gPath}}"></tbody>
+						</table>
+					</div>
+			
+					<div class="fileDetails" data-bind="visible: detailsVisible['leftPanel']() == 'info'">
+						<table class="fileDetailsTable"  data-bind="template: {name:'detailsTemplate', data:info['leftPanel']}"></table>
+					</div>
+			
+					<div class="filePreview" data-bind="visible: detailsVisible['leftPanel']() == 'preview'">
+						<div class="previewContent"/>
+					</div>
+				
+				</div>
+			
 			</div>
 			
-			<div class="fileDetails">
-				<table class="fileDetailsTable"/>
+			<div class="noInfo">
+				<span data-bind="visible: !(needsSnapshotSelection.leftPanel())">Loading…</span>
+				<span data-bind="visible: needsSnapshotSelection.leftPanel()">Select a snapshot.</span>
 			</div>
 			
-			<div class="filePreview">
-				<div class="previewContent"/>
-			</div>
-			
-			<div class="loading">
-				Loading…
-			</div>
-			
-			<div class="nosnapshot">
-				Select a snapshot…
-			</div>
-			
-		</div>
 		</div>
 
 	</div>
 	
 	<div id="rightPanel" class="panel">
 		
-		<div class="sidebar">
-			<div class="snapshots">
-			</div>
+
+		<div class="sidebar" data-bind="template: {name: 'sidebarTemplate', templateOptions:{panel:'rightPanel', snapshots:snapshots, versions:versions, selectedSnapshot:selectedSnapshot}}">
+
 		</div>
 		
 		<div class="notSidebar">
-
+			
+			<div data-bind="fadeInVisible: info['rightPanel']">
+				<div class="infoBox" data-bind="template: {name: 'infoTemplate', data: info['rightPanel'], templateOptions:{panel:'rightPanel', detailsVisible:detailsVisible['rightPanel'], diffable:diffable}}">	</div>
 		
-		<div class="infoBox loading">
-			<div class="innerDiv">
-			<span class="filenameSpan"/>
-			<span class="mtimeSpan"/>
-			<div class="buttons">
-			<a class="preview button" onclick="loadPreview('rightPanel');showDiff(false)">Show Preview…</a>
-			<a class="info button" onclick="setPanelClass('rightPanel', 'fileInfo');showDiff(false)">Show Info…</a>
-			<a class="contents button" onclick="setPanelClass('rightPanel', 'dirContents');showDiff(false);">Show Contents…</a>
-			<a id="diffButton" class="diff button" onclick="showDiff(true);">Show Diff…</a>
-			</div>
-			<a class ="downloadLink"/>
-			</div>
-		</div>
-		
-		<div class="detailsContainer"> <!-- Only one of these subdivs should be visible at any time -->
-			<div class="directoryDetails">
-				<table id="directoryEntriesRight" class="directoryEntries sortable no-arrow">
-					<col class="name"/>
-					<col class="mtime"/>
-					<col class="size"/>
-					<tr><th class="sortable">Name</th><th class="sortable">Date Modified</th><th class="sortable">Size</th></tr>
-					<tbody class="directoryEntriesBody"/>
-				</table>
+				<div class="detailsContainer"> <!-- Only one of these subdivs should be visible at any time -->
+					
+					<div class="directoryDetails" data-bind="visible: detailsVisible['rightPanel']() == 'entries'">
+						<table id="directoryEntriesLeft" class="directoryEntries sortable no-arrow">
+							<col class="name"/>
+							<col class="mtime"/>
+							<col class="size"/>					
+							<tr><th class="sortable">Name</th><th class="sortable">Date Modified</th><th class="sortable">Size</th></tr>
+							<tbody class="directoryEntriesBody" data-bind="template: {name:'entryTemplate', foreach: entries['rightPanel'], templateOptions:{currentPath:gPath}}"></tbody>
+						</table>
+					</div>
+			
+					<div class="fileDetails" data-bind="visible: detailsVisible['rightPanel']() == 'info'">
+						<table class="fileDetailsTable"  data-bind="template: {name:'detailsTemplate', data:info['rightPanel']}"></table>
+					</div>
+			
+					<div class="filePreview" data-bind="visible: detailsVisible['rightPanel']() == 'preview'">
+						<div class="previewContent"/>
+					</div>
+				
+				</div>
+			
 			</div>
 			
-			<div class="fileDetails">
-				<table class="fileDetailsTable"/>
+			<div class="noInfo">
+				<span data-bind="visible: !(needsSnapshotSelection.rightPanel())">Loading…</span>
+				<span data-bind="visible: needsSnapshotSelection.rightPanel()">Select a snapshot.</span>
 			</div>
 			
-			<div class="filePreview">
-				<div class="previewContent"/>
-			</div>
-			
-			<div class="loading">
-				Loading…
-			</div>
-			
-			<div class="nosnapshot">
-				Select a snapshot…
-			</div>
-			
-		</div>
 		</div>
 
 	</div>
-
 
 </body>
 </html>

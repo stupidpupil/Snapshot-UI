@@ -290,19 +290,18 @@ td.document{
 	border-color:#acacac;
 }
 
-
-.infoBox.directory{
+.infoBox .innerDiv.directory{
 	display:block;
-	background: url(/static/img/folder32.png) no-repeat scroll 8px 16px;
+	background: url(/static/img/folder32.png) no-repeat scroll 8px 2px;
 }
 
-.infoBox.file{
+.infoBox .innerDiv.file{
 	display:block;
-	background: url(/static/img/document32.png) no-repeat scroll 8px 16px;
+	background: url(/static/img/document32.png) no-repeat scroll 8px 2px;
 }
 
-.infoBox.file.previewable{
-	background: url(/static/img/previewable32.png) no-repeat scroll 8px 16px;
+.infoBox .innerDiv.file.previewable{
+	background: url(/static/img/previewable32.png) no-repeat scroll 8px 2px;
 }
 
 .infoBox .filenameSpan{
@@ -351,8 +350,8 @@ td.document{
 	padding:10px;
 }
 
-.panel .detailsContainer .loading,
-.panel .detailsContainer .nosnapshot{
+
+.panel .noInfo{
 	font-size:1.3em;
 	color:#5c5c6e;
 	padding: 20px;

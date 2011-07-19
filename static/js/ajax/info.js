@@ -1,121 +1,78 @@
 function showDataInPanel(panelId) {
     var data = gPathInfo[panelId];
+
+
+    if (data.mtime) {
+        data.mtime = new Date(parseInt(data.mtime, 10) * 1000);
+    }
+
+	viewModel.info[panelId](data)
+
     if (data.entries) {
-        var entries = data.entries;
-        var l = entries.length;
-        var i;
-        var tbody = getElementForPanelAndClass(panelId, "directoryEntriesBody");
-        var textNode;
-        deleteChildren(tbody);
-        var onclickFunction = function () {
-                changePath(gPath + "/" + this.id);
-            };
-        for (i = 0; i < l; i++) {
-            tr = document.createElement("tr");
-            td = document.createElement("td");
-            tr.appendChild(td);
-            td.appendChild(document.createTextNode(entries[i].filename));
-            td.className = entries[i].folder ? "folder" : "document";
-            td = document.createElement("td");
-            tr.appendChild(td);
-            date = new Date(parseInt(entries[i].mtime, 10) * 1000);
-            td.appendChild(document.createTextNode(date.toUTCString()));
-            td = document.createElement("td");
-            tr.appendChild(td);
-            textNode = document.createTextNode(bytesToSize(parseInt(entries[i].size, 10)));
-            td.appendChild(textNode);
-            tbody.appendChild(tr);
-            tr.id = entries[i].filename;
-            tr.addEventListener("click", onclickFunction, false);
-        }
+
+		viewModel.entries[panelId](data.entries);
+	
     }
-    fdTableSort.prepareTableData(getElementForPanelAndClass(panelId, "directoryEntriesBody").parentNode);
-    fdTableSort.jsWrapper(getElementForPanelAndClass(panelId, "directoryEntriesBody").parentNode.id, 0);
-    details = getElementForPanelAndClass(panelId, "fileDetailsTable");
-    deleteChildren(details);
-    if (data.filename) {
-        getElementForPanelAndClass(panelId, "filenameSpan").textContent = data.filename;
-    }
-    if (data.mtime) {
-        date = new Date(parseInt(data.mtime, 10) * 1000);
-        getElementForPanelAndClass(panelId, "mtimeSpan").textContent = "Modified: " + date.toUTCString();
-    }
-    if (data.kind) {
-        tr = document.createElement("tr");
-        td = document.createElement("td");
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode("Kind"));
-        td = document.createElement("td");
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode(data.kind));
-        details.appendChild(tr);
-    }
-    if (data.mtime) {
-        tr = document.createElement("tr");
-        td = document.createElement("td");
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode("Modified"));
-        td = document.createElement("td");
-        tr.appendChild(td);
-        date = new Date(parseInt(data.mtime, 10) * 1000);
-        td.appendChild(document.createTextNode(date.toUTCString()));
-        details.appendChild(tr);
-    }
-    if (data.ctime) {
-        tr = document.createElement("tr");
-        td = document.createElement("td");
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode("Created"));
-        td = document.createElement("td");
-        tr.appendChild(td);
-        date = new Date(parseInt(data.ctime, 10) * 1000);
-        td.appendChild(document.createTextNode(date.toUTCString()));
-        details.appendChild(tr);
-    }
-    if (data.size) {
-        tr = document.createElement("tr");
-        td = document.createElement("td");
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode("Size"));
-        td = document.createElement("td");
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode(bytesToSize(parseInt(data.size, 10)) + " (" + data.size + " bytes)"));
-        details.appendChild(tr);
-    }
-    if (data.mimetype) {
-        tr = document.createElement("tr");
-        td = document.createElement("td");
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode("Mime-type"));
-        td = document.createElement("td");
-        tr.appendChild(td);
-        td.appendChild(document.createTextNode(data.mimetype));
-        details.appendChild(tr);
-        if (data.mimetype === "application/x-directory") {
-            tr = document.createElement("tr");
-            td = document.createElement("td");
-            tr.appendChild(td);
-            td.appendChild(document.createTextNode("Contents"));
-            td = document.createElement("td");
-            tr.appendChild(td);
-            td.appendChild(document.createTextNode(data.entries.length + " items"));
-            details.appendChild(tr);
-            setPanelClass(panelId, "dirContents");
-            getElementForPanelAndClass(panelId, "infoBox").className = "infoBox directory";
-        } else {
-            if (data.preview === true) {
-                getElementForPanelAndClass(panelId, "infoBox").className = "infoBox file previewable";
-                setPanelClass(panelId, "fileInfo");
-            } else {
-                getElementForPanelAndClass(panelId, "infoBox").className = "infoBox file";
-                setPanelClass(panelId, "fileInfo");
-            }
-        }
-    }
-    getElementForPanelAndClass(panelId, "downloadLink").href = "/download/" + data.link;
+
 }
 
-function loadInfo(shouldLoadVersions, panel) {
+
+function smartResetDetailsView(panelId){
+	if (viewModel.detailsVisible[panelId]() == 'entries' && viewModel.info[panelId]().mimetype != "application/x-directory"){
+		setDetailsViewToDefault(panelId)
+		return;
+	}
+
+
+	if (viewModel.detailsVisible[panelId]() == 'preview' && !(viewModel.info[panelId]().preview)){
+		setDetailsViewToDefault(panelId)
+		return;
+	}
+
+	if (viewModel.detailsVisible[panelId]() == 'preview'){
+		loadPreview(panelId)
+		return;
+	}
+	
+
+	if (viewModel.detailsVisible[panelId]() == null){
+		setDetailsViewToDefault(panelId)
+		return;
+	}
+}
+
+function setDetailsViewToDefault(panelId){
+	if(viewModel.info[panelId]() == null){
+		return;
+	}
+	
+	if (viewModel.info[panelId]().mimetype == "application/x-directory") {
+		viewModel.detailsVisible[panelId]('entries')
+	}else{
+		viewModel.detailsVisible[panelId]('info')
+	}
+}
+
+function loadInfo(pathChanged, panel) {
+	
+	
+	if(panel == 'both'){
+		viewModel.info['leftPanel'](null)
+		viewModel.info['rightPanel'](null)
+		viewModel.entries['leftPanel'].removeAll()
+		viewModel.entries['rightPanel'].removeAll()
+		
+		viewModel.needsSnapshotSelection["leftPanel"](false)
+		viewModel.needsSnapshotSelection["rightPanel"](false)
+		
+	}else{
+		viewModel.info[panel](null)
+		viewModel.entries[panel].removeAll()
+		viewModel.needsSnapshotSelection[panel](false)
+	}
+	
+	viewModel.diffable(false)
+	
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
         var uri = "/info";
         var cfg;
@@ -124,7 +81,7 @@ function loadInfo(shouldLoadVersions, panel) {
                 method: "GET",
                 data: {
                     "path": gPath,
-                    "snapshot": gSelectedSnapshot.leftPanel
+                    "snapshot": viewModel.selectedSnapshot.leftPanel()
                 }
             };
         } else {
@@ -132,8 +89,8 @@ function loadInfo(shouldLoadVersions, panel) {
                 method: "GET",
                 data: {
                     "path": gPath,
-                    "snapshot": gSelectedSnapshot.leftPanel,
-                    "snapshot2": gSelectedSnapshot.rightPanel
+                    "snapshot": viewModel.selectedSnapshot.leftPanel(),
+                    "snapshot2": viewModel.selectedSnapshot.rightPanel()
                 }
             };
         }
@@ -147,40 +104,65 @@ function loadInfo(shouldLoadVersions, panel) {
                 } catch (e) {
                     alert("Invalid path info");
                 }
+
+				//Panel-sensitivity
                 if (args[1] === "both" || args[1] === "leftPanel") {
                     if (data.info) {
                         gPathInfo.leftPanel = data.info;
                         showDataInPanel("leftPanel");
-                    } else {
-                        setPanelClass("leftPanel", "nosnapshot");
-                    }
+                    }else{
+						viewModel.needsSnapshotSelection.leftPanel(true);
+					}
                 }
                 if (args[1] === "both" || args[1] === "rightPanel") {
                     if (data.info2) {
                         gPathInfo.rightPanel = data.info2;
                         showDataInPanel("rightPanel");
-                    } else {
-                        setPanelClass("rightPanel", "nosnapshot");
-                    }
+                    }else{
+						viewModel.needsSnapshotSelection.rightPanel(true);
+					}
                 }
-                updateHistory();
-                if (args[0]) { //loadVersions
+
+				viewModel.diffable(data.diffable)
+
+
+                if (args[0]) { //Path Changed
                     if ((data.info && data.info.mimetype !== "application/x-directory")
  					|| (data.info2 && data.info2.mimetype !== "application/x-directory")) {
                         loadVersions();
                     }
-                }
-                if (data.diffable) {
-                    var infoBox = gPanels.rightPanel.infoBox;
-                    infoBox.className = "diffable " + infoBox.className;
-                    if (gShowingDiff) {
-                        loadDiff();
-                    }
-                } else {
-                    if (gShowingDiff) {
-                        showDiff(false);
-                    }
-                }
+
+	                if (args[1] === "both" || args[1] === "leftPanel") {
+						setDetailsViewToDefault("leftPanel")
+					}
+					
+					if (args[1] === "both" || args[1] === "rightPanel") {
+						setDetailsViewToDefault("rightPanel")
+					}
+					
+				}else{
+					
+					if (args[1] === "both" || args[1] === "leftPanel") {
+						smartResetDetailsView("leftPanel")
+					}
+					
+					if (args[1] === "both" || args[1] === "rightPanel") {
+						smartResetDetailsView("rightPanel")
+					}
+					
+					
+					if (viewModel.detailsVisible.leftPanel() == 'diff' && viewModel.detailsVisible.leftPanel() == 'diff'){
+						if (viewModel.diffable()){
+							loadDiff()
+						}else{
+							setDetailsViewToDefault("leftPanel")
+							setDetailsViewToDefault("rightPanel")
+						}
+					}
+				}
+				
+				 updateHistory(); 
+					
             });
         }
 
@@ -191,7 +173,7 @@ function loadInfo(shouldLoadVersions, panel) {
 				showError("Error loading path info!", "Status:" + response.status + ", Text:" + response.text);
 			}
         }
-        Y.on('io:success', successPathInfo, Y, [shouldLoadVersions, panel]);
+        Y.on('io:success', successPathInfo, Y, [pathChanged, panel]);
         Y.on('io:failure', failurePathInfo, Y, []);
         var request = Y.io.queue(uri, cfg);
     });

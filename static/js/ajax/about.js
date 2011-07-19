@@ -1,8 +1,5 @@
 function loadAbout() {
-    setPanelClass("leftPanel", "loading");
-    setPanelClass("rightPanel", "loading");
-    gPanels.leftPanel.infoBox.className = "infoBox loading";
-    gPanels.rightPanel.infoBox.className = "infoBox loading";
+	
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
         var uri = "/about";
 
@@ -19,12 +16,15 @@ function loadAbout() {
                	if (location.pathname.split("/")[1] === "link") {
                     parseLocation();
                 } else {
-                    gSelectedSnapshot.leftPanel = data.startingSnapshot;
-                    changePath(data.startingPath);
+					changePath(data.startingPath)
+					changeSnapshot("leftPanel",data.startingSnapshot)
+					ko.applyBindings(viewModel);
                 }
                 if (data.name) {
                     document.getElementById("serverName").textContent = data.name;
                 }
+				
+				
             });
         }
 

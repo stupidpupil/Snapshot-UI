@@ -19,12 +19,6 @@ function getElementForPanelAndClass(panelId, className) {
     return xpathResult.singleNodeValue;
 }
 
-function setPanelClass(panelId, newClass) {
-    var panel = document.getElementById(panelId);
-    panel.className = "panel " + newClass;
-    setWidths();
-    setHeights();
-}
 
 function bytesToSize(bytes) {
     if (isNaN(bytes)) {
@@ -38,12 +32,15 @@ function bytesToSize(bytes) {
     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[[i]];
 }
 
+
+// DISABLED
+
 function updateHistory() { /* Errors abound */
     var title, linkURI;
-    title = gPath + "@" + gSelectedSnapshotName.leftPanel;
+    title = gPath + "@" + viewModel.selectedSnapshot.leftPanel();
     linkURI = "/link/" + gPathInfo.leftPanel.link;
     if (gShowingRightPanel && gPathInfo.rightPanel) {
-        title = title + " & " + gSelectedSnapshotName.rightPanel;
+        title = title + " & " + viewModel.selectedSnapshot.rightPanel();
         linkURI = linkURI + "/" + gPathInfo.rightPanel.link;
     }
     window.history.pushState(null, title, linkURI);

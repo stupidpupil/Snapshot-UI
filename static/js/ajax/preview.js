@@ -1,13 +1,16 @@
 function loadPreview(panel) {
     deleteChildren(getElementForPanelAndClass(panel, "previewContent"));
-    setPanelClass(panel, "loading");
+	viewModel.detailsVisible[panel]('preview')
+	
+	//FIXME Add 'Loading..' somehow to preview view
+
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
         var uri = "/preview";
         var cfg = {
             method: "GET",
             data: {
                 "path": gPath,
-                "snapshot": gSelectedSnapshot[panel]
+                "snapshot": viewModel.selectedSnapshot[panel]()
             }
         };
 
@@ -21,7 +24,7 @@ function loadPreview(panel) {
                 updated = document.importNode(previewPage.getElementById("preview"), true);
                 deleteChildren(old);
                 old.appendChild(updated);
-                setPanelClass(args[0], "filePreview");
+
             }
         }
 
@@ -32,7 +35,6 @@ function loadPreview(panel) {
             loadingP.className = "previewError";
             loadingP.appendChild(document.createTextNode("An error occured while loading the preview."));
             getElementForPanelAndClass(args[0], "previewContent").appendChild(loadingP);
-            setPanelClass(args[0], "filePreview");
         }
         Y.on('io:success', successPreview, Y, [panel]);
         Y.on('io:failure', failurePreview, Y, [panel]);

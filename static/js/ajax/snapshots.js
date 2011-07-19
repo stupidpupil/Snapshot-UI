@@ -1,34 +1,7 @@
-function aElemFromSnapshot(panel, snapshot) {
-    link = document.createElement("a");
-    //link.appendChild(document.createTextNode(snapshot.name));
-    link.appendChild(document.createTextNode(humaneDate(snapshot["iso8601"])));
-
-	link.snapId = snapshot.snapId;
-    link.addEventListener("click", function () {
-        changeSnapshot(panel, snapshot.snapId);
-    }, false);
-
-    return link;
-}
-
-function showSnapshotAsSelected() {
-    var snapDiv, l, i, j;
-    for (i = 0; i < gPanelArr.length; i++) {
-        snapDiv = getElementForPanelAndClass(gPanelArr[i], "snapshots");
-        if (snapDiv.hasChildNodes()) {
-            l = snapDiv.childNodes.length;
-            for (j = 0; j < l; j++) {
-                snapDiv.childNodes[j].className = "";
-                if (snapDiv.childNodes[j].snapId === gSelectedSnapshot[gPanelArr[i]]) {
-                    snapDiv.childNodes[j].className = "selected";
-                    gSelectedSnapshotName[gPanelArr[i]] = snapDiv.childNodes[j].textContent;
-                }
-            }
-        }
-    }
-}
-
 function loadSnapshots() {
+	viewModel.snapshots.removeAll();				
+	viewModel.versions.removeAll();				
+	
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
         var uri = "/snapshots";
         var cfg = {
@@ -48,19 +21,9 @@ function loadSnapshots() {
                     alert("Invalid snapshot info");
                 }
                 snapshots = data.snapshots;
-                snapDiv = getElementForPanelAndClass("leftPanel", "snapshots");
-                deleteChildren(snapDiv);
-                deleteChildren(getElementForPanelAndClass("rightPanel", "snapshots"));
-                h2 = document.createElement("h2");
-                h2.appendChild(document.createTextNode("Snapshots"));
-                snapDiv.appendChild(h2);
-                getElementForPanelAndClass("rightPanel", "snapshots").appendChild(h2.cloneNode(true));
-                for (i = 0; i < snapshots.length; i++) {
-                    snapDiv.appendChild(aElemFromSnapshot("leftPanel", snapshots[i]));
-                    getElementForPanelAndClass("rightPanel", "snapshots").appendChild(aElemFromSnapshot("rightPanel", snapshots[i]));
-                }
-                showSnapshotAsSelected();
-                loadInfo(true, "both");
+
+             	viewModel.snapshots(snapshots);		
+                
             });
         }
 
@@ -75,12 +38,7 @@ function loadSnapshots() {
 }
 
 function loadVersions() {
-    var i;
-    for (i = 0; i < gPanelArr.length; i++) {
-        var expression = "//xhtml:div[@id='" + gPanelArr[i] + "']//xhtml:div[@class='snapshots']/xhtml:h2";
-        var xpathResult = document.evaluate(expression, document, NSResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        xpathResult.singleNodeValue.textContent = "Loading Versions…";
-    } //FFS
+
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
         var uri = "/snapshots";
         var cfg = {
@@ -101,31 +59,17 @@ function loadVersions() {
                     alert("Invalid version info");
                 }
                 versions = data.versions;
-                snapDiv = getElementForPanelAndClass("leftPanel", "snapshots");
-                deleteChildren(snapDiv);
-                deleteChildren(getElementForPanelAndClass("rightPanel", "snapshots"));
+				viewModel.versions.removeAll();				
+			
                 for (j = 0; j < versions.length; j++) {
-                    snapshots = versions[j];
-                    h2 = document.createElement("h2");
-                    h2.appendChild(document.createTextNode("Version " + (versions.length - j)));
-                    snapDiv.appendChild(h2);
-                    getElementForPanelAndClass("rightPanel", "snapshots").appendChild(h2.cloneNode(true)); //FIXME
-                    for (i = 0; i < snapshots.length; i++) {
-                        snapDiv.appendChild(aElemFromSnapshot("leftPanel", snapshots[i]));
-                        getElementForPanelAndClass("rightPanel", "snapshots").appendChild(aElemFromSnapshot("rightPanel", snapshots[i])); //FIXME
-                    }
-                }
-                showSnapshotAsSelected();
+					newVer = ko.observableArray(versions[j])
+					newVer().i = versions.length-j	
+		       		viewModel.versions.push(newVer);
+				}
             });
         }
 
         function failureVersions(id, response, args) {
-			var i;
-		    for (i = 0; i < gPanelArr.length; i++) {
-		        var expression = "//xhtml:div[@id='" + gPanelArr[i] + "']//xhtml:div[@class='snapshots']/xhtml:h2";
-		        var xpathResult = document.evaluate(expression, document, NSResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-		        xpathResult.singleNodeValue.textContent = "Snapshots";
-		    } //FFS
 			showError("Error loading versions!", "Status:" + response.status + ", Text:" + response.text);
         }
 
