@@ -9,6 +9,8 @@ class ZFSSnapshotHelper < SPSnapshot::SnapshotHelper
 
   
   def snapshots
+    return @snapshots unless @snapshots.nil?
+    
     output = `zfs list -r -H -t snapshot -o name,creation -s creation "#{@fsName}"`
     retval = []
     
@@ -25,9 +27,9 @@ class ZFSSnapshotHelper < SPSnapshot::SnapshotHelper
     end
     
     retval << SPSnapshot::Snapshot.new("@current", "Current", nil)
-    retval = retval.reverse
+    @snapshots = retval.reverse
     
-    return retval
+    return @snapshots
   end
   
   def absPathForRelPathAndSnapshot(relativePath, snapshot)
