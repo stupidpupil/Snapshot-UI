@@ -31,30 +31,3 @@ function bytesToSize(bytes) {
     var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[[i]];
 }
-
-
-// DISABLED
-
-function updateHistory() { /* Errors abound */
-    var title, linkURI;
-    title = gPath + "@" + viewModel.selectedSnapshot.leftPanel();
-    linkURI = "/link/" + gPathInfo.leftPanel.link;
-    if (gShowingRightPanel && gPathInfo.rightPanel) {
-        title = title + " & " + viewModel.selectedSnapshot.rightPanel();
-        linkURI = linkURI + "/" + gPathInfo.rightPanel.link;
-    }
-    window.history.pushState(null, title, linkURI);
-    document.title = title;
-}
-
-function parseLocation() {
-    decryptLink(location.pathname.split("/")[2], "leftPanel");
-    if (location.pathname.split("/")[3]) {
-        showRightPanel(true, false);
-        decryptLink(location.pathname.split("/")[3], "rightPanel");
-    } else {
-		if(gShowingRightPanel === true){
-        	showRightPanel(false);
-		}
-    }
-}

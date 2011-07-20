@@ -32,3 +32,36 @@ function decryptLink(linkID, panel) {
         var request = Y.io.queue(uri, cfg);
     });
 }
+
+// Helpers?
+
+function updateHistory() { /* Errors abound */
+	var title, linkURI;
+    title = ""
+	linkURI = ""
+
+	if(viewModel.info.leftPanel() != null){
+		title = title + gPath + " @ " + viewModel.selectedSnapshot.leftPanel();
+		linkURI = linkURI + "/link/" + viewModel.info.leftPanel().link;
+	}
+	
+	if(viewModel.info.rightPanel() != null){
+		title = title + " & " + viewModel.selectedSnapshot.rightPanel();
+		linkURI = linkURI + "/" + viewModel.info.rightPanel().link;
+	}
+	
+    window.history.pushState(null, title, linkURI);
+    document.title = title;
+}
+
+function parseLocation() {
+    decryptLink(location.pathname.split("/")[2], "leftPanel");
+    if (location.pathname.split("/")[3]) {
+        showRightPanel(true, false);
+        decryptLink(location.pathname.split("/")[3], "rightPanel");
+    } else {
+		if(gShowingRightPanel === true){
+        	showRightPanel(false);
+		}
+    }
+}

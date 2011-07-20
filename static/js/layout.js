@@ -40,9 +40,8 @@ function showRightPanel(bool, load) {
             changeSnapshot('rightPanel', viewModel.selectedSnapshot.leftPanel());
         }
     } else {
-        if (viewModel.selectedSnapshot.rightPanel()) { //HORRIBLE HORRIBLE HACK
-            //updateHistory(); //Got to get rid of the last part of the link
-        }
+		viewModel.info.rightPanel(null)
+		updateHistory();
 		
 		if (viewModel.detailsVisible.leftPanel() == 'diff'){
 			setDetailsViewToDefault('leftPanel')
