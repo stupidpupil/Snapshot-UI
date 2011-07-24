@@ -56,8 +56,12 @@ module SPSnapshot
         return ck1 != ck2
       end
       
-      mtimeThenCksum = proc do |path1, path2|
-        return (mtimeCheck.call(path1, path2) and cksumCheck.call(path1, path2))
+      inodeCheck = proc do |path1, path2|
+        return `ls -i "#{path1}"`.split(" ")[0] != `ls -i "#{path2}"`.split(" ")[0]
+      end
+      
+      multiCheck = proc do |path1, path2|
+        return ((inodeCheck.call(path1, path2) or mtimeCheck.call(path1, path2)) and cksumCheck.call(path1, path2))
       end
       
       #
@@ -65,7 +69,7 @@ module SPSnapshot
       snapshots[1..-1].each do |snap|
         thisVersionPath = absPathForRelPathAndSnapshot(relativePath, snap)
 
-        if pathsDiffer(thisVersionPath, lastVersionPath, mtimeThenCksum)
+        if pathsDiffer(thisVersionPath, lastVersionPath, multiCheck)
           retArray << thisVersion
           thisVersion = []
         end
