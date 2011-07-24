@@ -41,6 +41,7 @@ function showRightPanel(bool, load) {
         }
     } else {
 		viewModel.info.rightPanel(null)
+		viewModel.diffable(false)
 		updateHistory();
 		
 		if (viewModel.detailsVisible.leftPanel() == 'diff'){
