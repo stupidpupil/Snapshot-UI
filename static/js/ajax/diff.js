@@ -1,8 +1,4 @@
 function loadDiff() {
-	viewModel.detailsVisible['leftPanel']('diff') 
-	viewModel.detailsVisible['rightPanel']('diff') 
-	
-    setDiffMessage("Loading…");
 	
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
         var uri = "/diff";
@@ -21,19 +17,13 @@ function loadDiff() {
             if (o.responseXML === null) {
                 failureDiff(id, o, args);
             } else {
-				contentContainer = document.getElementById("diffContent");
-                diffPage = o.responseXML;
-                updated = document.importNode(diffPage.getElementById("diff"), true);
-                deleteChildren(contentContainer);
-                contentContainer.appendChild(updated);
-                setWidths();
+  				viewModel.diffXML(o.responseXML);
             }
         }
 
         function failureDiff(id, o, args) {
             var data = o.responseText;
-			setDiffMessage("Unable to show diff");
-			showError("Error loading diff!", "Status:" + response.status + ", Text:" + response.text);
+			//showError("Error loading diff!", "Status:" + response.status + ", Text:" + response.text);
         }
 
         Y.on('io:success', successDiff, Y, []);
@@ -42,14 +32,3 @@ function loadDiff() {
     });
 }
 
-function setDiffMessage(message){
-	var contentContainer, span;
-	contentContainer = document.getElementById("diffContent");
-	deleteChildren(contentContainer);
-    span = document.createElement("span");
-	span.className = "info";
-	
-	
-    span.appendChild(document.createTextNode(message));
-	contentContainer.appendChild(span);
-}

@@ -1,28 +1,30 @@
-function writeOutPathComponents() {
-    var components, clickFunction, i;
-	deleteChildren(gPathComponentsSpan)
-
-    components = gPath.split("/");
-    clickFunction = function () {
-        changePath(this.id);
-    };
-    for (i = 0; i < components.length; i++) {
-        link = document.createElement("a");
-        link.appendChild(document.createTextNode(components[i]));
-        link.id = components.slice(0, i + 1).join("/");
-        link.addEventListener("click", clickFunction, false);
-        gPathComponentsSpan.appendChild(link);
-    }
+function generatePathComponentsForPath(path){
+	basic = path.split("/")
+	
+	ret = []
+	
+	for (var i=0; i < basic.length; i++) {
+		comp = []
+		comp.basename = basic[i]
+		comp.path = basic.slice(0,i+1).join("/")
+		ret.push(comp)
+	};
+	return ret
 }
+
 
 function changePath(newPath) {
     var snapDiv, h2, i;
 
     gPath = newPath;
 
-	loadInfo(true, "both");
+	viewModel.detailsView(null)
+	
+	loadInfo(true, "leftPanel");
+	loadInfo(true, "rightPanel");
+	
     loadSnapshots();
-    writeOutPathComponents();
+    viewModel.pathComponents(generatePathComponentsForPath(gPath));
 }
 
 function changeSnapshot(panel, newSnapshot) {

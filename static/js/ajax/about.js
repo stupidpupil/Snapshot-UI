@@ -16,20 +16,17 @@ function loadAbout() {
                	if (location.pathname.split("/")[1] === "link") {
                     parseLocation();
                 } else {
+					viewModel.selectedSnapshot.leftPanel(data.startingSnapshot)
 					changePath(data.startingPath)
-					changeSnapshot("leftPanel",data.startingSnapshot)
 					ko.applyBindings(viewModel);
                 }
-                if (data.name) {
-                    document.getElementById("serverName").textContent = data.name;
-                }
-				
+
 				
             });
         }
 
         function failureAbout(id, o, args) {
-			showError("Error contacting server!", "Status:" + response.status + ", Text:" + response.text);
+			//showError("Error contacting server!", "Status:" + response.status + ", Text:" + response.text);
         }
 
         Y.on('io:success', successAbout, Y, []);

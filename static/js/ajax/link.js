@@ -16,7 +16,8 @@ function decryptLink(linkID, panel) {
                     alert("Invalid snapshot info");
                 }
                 viewModel.selectedSnapshot[args[0]](data.snapshot);
-                if (viewModel.selectedSnapshot.leftPanel() && (!gShowingRightPanel || viewModel.selectedSnapshot.rightPanel())) {
+
+                if (viewModel.selectedSnapshot.leftPanel() && (!viewModel.showingRightPanel() || viewModel.selectedSnapshot.rightPanel())) {
                     changePath(data.path);
                 }
 				ko.applyBindings(viewModel);
@@ -25,7 +26,7 @@ function decryptLink(linkID, panel) {
         }
 
         function failureDecrypt(id, o, args) {
-            showError("Unable to decrypt link!", "The link requested could not be decrypted. The server key may have changed since the link was generated or the the link may have been entered incorrectly.");
+            //showError("Unable to decrypt link!", "The link requested could not be decrypted. The server key may have changed since the link was generated or the the link may have been entered incorrectly.");
         }
         Y.on('io:success', successDecrypt, Y, [panel]);
         Y.on('io:failure', failureDecrypt, Y, []);
@@ -57,10 +58,10 @@ function updateHistory() { /* Errors abound */
 function parseLocation() {
     decryptLink(location.pathname.split("/")[2], "leftPanel");
     if (location.pathname.split("/")[3]) {
-        showRightPanel(true, false);
+		showRightPanel(true);
         decryptLink(location.pathname.split("/")[3], "rightPanel");
     } else {
-		if(gShowingRightPanel === true){
+		if(viewModel.showingRightPanel() === true){
         	showRightPanel(false);
 		}
     }

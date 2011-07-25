@@ -1,155 +1,48 @@
-function showError(title, description) {
-    document.getElementById("errorHeader").textContent = title;
-    document.getElementById("errorDescription").textContent = description;
-    orderSheetOut("errorSheet", true);
-}
-
-function orderSheetOut(sheetID, bool) {
-    var sheet = document.getElementById(sheetID);
-    var header = document.getElementById("header");
-    YUI().use('anim', function (Y) {
-		var shownTop = (header.offsetHeight + gPathComponentsSpan.offsetHeight - 5);
-		var hiddenTop = -(sheet.offsetHeight);
+function resize(){
+	if(document.getElementById("panes")){
+		document.getElementById("panes").style.height = (document.body.clientHeight-document.getElementById("header").offsetHeight)+"px";
+	}
 	
-        var anim1 = new Y.Anim({
-            node: '#' + sheetID,
-            from: {
-                top: !bool ? shownTop : hiddenTop
-            },
-            to: {
-                top: bool ? shownTop : hiddenTop
-            },
-            duration: 0.25,
-            easing: Y.Easing.easeIn
-        });
-        anim1.on('end', function (ev) {
-            if (!bool) {
-                sheet.style.top = -window.innerWidth + "px";
-            }
-        });
-        anim1.run();
-    });
+	if(document.getElementById("leftDetailsView")){
+		document.getElementById("leftDetailsView").style.height = (document.getElementById("leftNotsidebar").clientHeight-document.getElementById("leftSummary").offsetHeight)+"px";
+	}
+	
+	if(document.getElementById("rightDetailsView")){
+		document.getElementById("rightDetailsView").style.height = (document.getElementById("rightNotsidebar").clientHeight-document.getElementById("rightSummary").offsetHeight)+"px";
+	}
+	
+	if(document.getElementById("diffContainer")){
+		document.getElementById("diffContainer").style.height = document.getElementById("leftDetailsView").offsetHeight + "px"
+		document.getElementById("diffContainer").style.width = document.getElementById("leftDetailsView").offsetWidth + document.getElementById("rightDetailsView").offsetWidth -1 + "px"
+	}
+
 }
 
-/* Right Panel */
+function animateRightPanelTo(num){
+	$('#leftpane').animate({'marginRight':num+'%'},500);
+	resize();
+}
 
-function showRightPanel(bool, load) {
-    gShowingRightPanel = bool;
-    if (bool === true) {
-        if (load) {
-            changeSnapshot('rightPanel', viewModel.selectedSnapshot.leftPanel());
-        }
+
+function showRightPanel(bool){
+	
+	if (bool === true) {
+		animateRightPanelTo(50)
+		viewModel.activePanels(["leftPanel","rightPanel"])
+        changeSnapshot('rightPanel', viewModel.selectedSnapshot.leftPanel());
     } else {
-		viewModel.info.rightPanel(null)
+		animateRightPanelTo(0)
+		viewModel.activePanels(["leftPanel"])
+	
 		viewModel.diffable(false)
 		updateHistory();
 		
-		if (viewModel.detailsVisible.leftPanel() == 'diff'){
+		if (viewModel.detailsView() == 'diff'){
 			setDetailsViewToDefault('leftPanel')
 		}
-		
-    }
-    animateRightPanel(bool);
-}
-
-
-function animateRightPanel(show) {
-    YUI().use('anim', function (Y) {	
-        var anim1 = new Y.Anim({
-            node: gPanels.rightPanel,
-            from: {
-                right: !show ? 0 : -gPanels.rightPanel.offsetWidth
-            },
-            to: {
-                right: show ? 0 : -gPanels.rightPanel.offsetWidth
-            },
-            duration: 0.25,
-            easing: Y.Easing.easeIn
-        });
-
-        anim1.on('tween', function (ev) {
-            setWidths();
-        });
-
-
-        var anim2 = new Y.Anim({
-            node: gPanels.rightPanel.sidebar,
-            from: {
-                right: !show ? 0 : -gPanels.rightPanel.sidebar.offsetWidth
-            },
-            to: {
-                right: show ? 0 : -gPanels.rightPanel.sidebar.offsetWidth
-            },
-            duration: 0.3,
-            easing: Y.Easing.easeOut
-        });
-
-        anim2.on('end', function (ev) {
-            setWidths();
-        });
-
-        anim1.run();
-        anim2.run();
-    });
-}
-
-
-/* Resizing */
-
-function resize() {
-	//Not great
-    gPanels.rightPanel.style.right = gShowingRightPanel ? 0 : - Math.floor(window.innerWidth / 2) + "px";
-    gPanels.rightPanel.sidebar.style.right = gShowingRightPanel ? 0 : (gPanels.leftPanel.sidebar.offsetWidth + 1) + "px";
     
-	setWidths();
-    setHeights();
-}
-
-function setHeights() {
-    var panelHeight, infoBoxHeight, i, nodes;
- 
-   	panelHeight = (window.innerHeight - (header.offsetHeight + gPathComponentsSpan.offsetHeight)) + 3;
-    gPanels.leftPanel.style.height = panelHeight + "px";
-    gPanels.rightPanel.style.height = panelHeight + "px";
-
-    for (i = gPanelArr.length - 1; i >= 0; i--) {
-        nodes = gPanels[gPanelArr[i]];
-        nodes.sidebar.style.height = panelHeight + "px";
-        nodes.notSidebar.style.height = panelHeight + "px";
-        nodes.detailsContainer.style.height = (panelHeight - nodes.infoBox.offsetHeight) + "px";
-    }
-
-    infoBoxHeight = 85 //Math.max(gPanels.leftPanel.infoBox.offsetHeight, gPanels.rightPanel.infoBox.offsetHeight);
-    document.getElementById("diffContainer").style.height = panelHeight - (infoBoxHeight - 3) + "px";
-}
-
-function setWidths() {
-    var leftPanelWidth, diffContainerWidth, leftNotSideBarWidth, i, nodes, leftSideCol;
-
-	if(gPanels.rightPanel.offsetLeft < 1){
-		leftPanelWidth = window.innerWidth;
-	}else{
-		leftPanelWidth = gPanels.rightPanel.offsetLeft;
 	}
-	
-    gPanels.rightPanel.style.width = Math.floor(window.innerWidth / 2) + "px";
-    gPanels.leftPanel.style.width = leftPanelWidth + "px";
-
-    leftNotSideBarWidth = leftPanelWidth - gPanels.leftPanel.sidebar.offsetWidth;
-    gPanels.leftPanel.notSidebar.style.width = leftNotSideBarWidth + "px";
-    gPanels.rightPanel.notSidebar.style.width = leftNotSideBarWidth + "px"; //Works, even if you can see why it's a bad idea
-   
-    for (i = gPanelArr.length - 1; i >= 0; i--) {
-        nodes = gPanels[gPanelArr[i]];
-        nodes.detailsContainer.style.width = (nodes.notSidebar.offsetWidth) + "px";
-    }
-
-    diffContainerWidth = (leftNotSideBarWidth * 2) + 1;
-    document.getElementById("diffContainer").style.width = diffContainerWidth + "px";
-    leftSideCol = document.getElementById("leftDiffCol");
-    if (leftSideCol) {
-        leftSideCol.style.width = leftNotSideBarWidth - 35 + "px";
-    }
-
-
 }
+
+window.addEventListener('resize', resize, false);
+window.addEventListener('pageshow', resize, false);

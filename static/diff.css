@@ -1,8 +1,36 @@
-/* @override https://licht.stupidpupil.co.uk/static/coderay.css */
+/* @override https://licht.stupidpupil.co.uk/static/diff.css */
 
-/* @override http://localhost:8080/static/coderay.css */
+#diffContainer{
+	color:white;
+	background-color: #262626;
+	overflow:auto;
+	text-align:center;
+}
 
-/* @override https://licht.stupidpupil.co.uk/static/coderay.css */
+#diffContainer img{
+	margin:15px;
+	-webkit-box-shadow: 0px 2px 6px #131313;
+	max-width:90%;
+	max-height:90%;
+	background-color:black;
+}
+
+.filecontent{
+	width:100%;
+	text-align:left;
+}
+
+table.filecontent {
+	border-collapse: collapse;
+	width: 100%;
+	table-layout: fixed;
+}
+
+table.filecontent td.line-code pre {
+	word-break: break-word;
+	padding: 0 10px 0 30px;
+	text-wrap:normal;
+}
 
 .CodeRay .an { color:#E7BE69 }                      /* html attribute */  
 .CodeRay .c  { color:#BC9358; font-style: italic; } /* comment */  

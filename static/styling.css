@@ -1,0 +1,151 @@
+/* @override https://licht.stupidpupil.co.uk/static/styling.css */
+
+html{
+	font-family: "Lucida Grande";
+	font-size:14px;
+}
+
+
+#toolbar{
+		background:-webkit-gradient(linear, left top, left bottom, from(#cbcbcb), to(#a5a5a5));
+	border-bottom: 1px solid #696969;
+}
+
+#breadcrumbContainer{
+	background-color: #d4d4d4;
+	border-bottom:1px solid #aaa;
+	color: #acd1fd;
+		background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#dedede));
+
+}
+
+/* Breadcrumbs */
+
+#breadcrumbContainer ul li{
+	color: #2d2d2d;
+	text-shadow: #fff 0 1px 2px;
+	font-weight: bold;
+	border-color:#909090;
+	border-style:solid;
+	cursor:pointer;
+	font-size:13px;
+}
+
+#breadcrumbContainer ul li:active{
+	color: #white;
+	text-shadow: #221a8c 0 1px 1px;
+	background:-webkit-gradient(linear, left top, left bottom, from(#acd1fd), to(#4382cd));
+}
+
+#breadcrumbs li:first-of-type:before{
+	content:"";
+	padding-left:20px;
+	background: url(images/home.png) no-repeat 0 0.1em;
+}
+
+#breadcrumbs li:after{
+	content:" >";
+	color: #909090;
+}
+
+#breadcrumbs li:active:after{
+	color: #ebe5fd;
+}
+
+#breadcrumbs li:last-of-type:after{
+	content:"";
+}
+
+#detailViewButtons .active{
+	background:-webkit-gradient(linear, left top, left bottom, from(#999), to(#222));
+}
+
+#detailViewButtons .disabled img{
+	opacity:0.2;
+}
+
+#detailViewButtons .disabled:active{
+	background:none;
+}
+
+/* Panes */
+
+
+.pane{
+	border-color: #aaa;
+	border-style: solid;
+	background-color: #ececec;
+}
+
+.notsidebar{
+	background-color: #ececec;
+}
+
+/* Sidebar */
+
+.sidebar{
+	background-color: #dde4ec;
+	border-color:#aaa;
+	border-style:solid;
+
+}
+
+.sidebar h2{
+	font-size:13px;
+	color: #5c5c6e;
+	text-transform:uppercase;
+	padding:0;
+	text-indent:10px;
+	margin: 0.7em 0 0;
+}
+
+.sidebar .snapshots{
+	font-size:12px;
+	text-indent:15px;
+}
+
+
+.sidebar .snapshots li{
+		padding:3px 0px;
+
+}
+
+.sidebar .snapshots .selected{
+	color:white;
+	padding:2px 0px;
+	font-weight:bold;
+		background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, rgb(108,164,216)),
+    color-stop(1, rgb(50,106,179))
+);
+	border-top: 1px solid #2869b3;
+	border-bottom: 1px solid #2869b3;
+	font-weight: bold;
+	text-shadow: #444 0 1px 0;
+}
+
+/* Not Sidebar */
+
+.summary{
+	border-bottom:1px solid #aaa;
+			background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #ddd),
+    color-stop(1, #bbb)
+);
+}
+
+
+.summary .pathname{
+	font-weight:bold;
+	
+}
+
+.summary .mtime{
+	color:#555;
+}

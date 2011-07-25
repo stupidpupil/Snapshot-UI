@@ -1,82 +1,84 @@
-function showDataInPanel(panelId) {
-    var data = gPathInfo[panelId];
 
-
-    if (data.mtime) {
-        data.mtime = new Date(parseInt(data.mtime, 10) * 1000);
-    }
-
-	viewModel.info[panelId](data)
-
-    if (data.entries) {
-
-		viewModel.entries[panelId](data.entries);
-	
-    }
-
+function allPanelsLoaded(){
+	var panel;
+	for (var i=0; i < viewModel.activePanels().length; i++) {
+		panel = viewModel.activePanels()[i];
+		if(viewModel.info[panel]() == null){
+			return false;
+		}
+	};
+	return true
 }
 
 
-function smartResetDetailsView(panelId){
-	if (viewModel.detailsVisible[panelId]() == 'entries' && viewModel.info[panelId]().mimetype != "application/x-directory"){
-		setDetailsViewToDefault(panelId)
+function smartResetDetailsView(){
+	var panel;
+	
+	panelId = 'leftPanel'
+	if (viewModel.detailsView() == 'entries'){
+		for (var i=0; i < viewModel.activePanels().length; i++) {
+			panel = viewModel.activePanels()[i];
+			if(viewModel.info[panel]().mimetype == "application/x-directory"){
+				return;
+			}
+		};
+		resetDetailsView()
 		return;
 	}
 
 
-	if (viewModel.detailsVisible[panelId]() == 'preview' && !(viewModel.info[panelId]().preview)){
-		setDetailsViewToDefault(panelId)
+	if (viewModel.detailsView() == 'preview'){
+		if(!(viewModel.previewable)){
+			resetDetailsView()
+		}
 		return;
 	}
 
-	if (viewModel.detailsVisible[panelId]() == 'preview'){
-		loadPreview(panelId)
+	if (viewModel.detailsView() == 'diff'){
+		if(!(viewModel.diffable)){
+			resetDetailsView()
+		}else{
+			loadDiff()
+		}
 		return;
 	}
 	
 
-	if (viewModel.detailsVisible[panelId]() == null){
-		setDetailsViewToDefault(panelId)
+	if (viewModel.detailsView() == null){
+		 resetDetailsView()
 		return;
 	}
 }
 
-function setDetailsViewToDefault(panelId){
-	if(viewModel.info[panelId]() == null){
-		return;
-	}
+function resetDetailsView(){
+	var panel;
 	
-	if (viewModel.info[panelId]().mimetype == "application/x-directory") {
-		viewModel.detailsVisible[panelId]('entries')
-	}else{
-		viewModel.detailsVisible[panelId]('info')
-	}
+	for (var i=0; i < viewModel.activePanels().length; i++) {
+		panel = viewModel.activePanels()[i];
+		if(viewModel.info[panel]().mimetype == "application/x-directory"){
+			viewModel.detailsView('entries')
+			return;
+		}
+	};
+	
+	viewModel.detailsView('info')
 }
 
 function loadInfo(pathChanged, panel) {
 	
-	
-	if(panel == 'both'){
-		viewModel.info['leftPanel'](null)
-		viewModel.info['rightPanel'](null)
-		viewModel.entries['leftPanel'].removeAll()
-		viewModel.entries['rightPanel'].removeAll()
-		
-		viewModel.needsSnapshotSelection["leftPanel"](false)
-		viewModel.needsSnapshotSelection["rightPanel"](false)
-		
-	}else{
-		viewModel.info[panel](null)
-		viewModel.entries[panel].removeAll()
-		viewModel.needsSnapshotSelection[panel](false)
-	}
+
+	viewModel.info[panel](null)
+	viewModel.entries[panel].removeAll()
+	viewModel.previewXML[panel](null)
+			
+	viewModel.diffXML(null)
 	
 	viewModel.diffable(false)
 	
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
         var uri = "/info";
         var cfg;
-        if (!gShowingRightPanel) {
+        if (viewModel.activePanels.indexOf("rightPanel") == -1) {
             cfg = {
                 method: "GET",
                 data: {
@@ -105,72 +107,64 @@ function loadInfo(pathChanged, panel) {
                     alert("Invalid path info");
                 }
 
-				//Panel-sensitivity
-                if (args[1] === "both" || args[1] === "leftPanel") {
-                    if (data.info) {
-                        gPathInfo.leftPanel = data.info;
-                        showDataInPanel("leftPanel");
-                    }else{
-						viewModel.needsSnapshotSelection.leftPanel(true);
-					}
-                }
-                if (args[1] === "both" || args[1] === "rightPanel") {
-                    if (data.info2) {
-                        gPathInfo.rightPanel = data.info2;
-                        showDataInPanel("rightPanel");
-                    }else{
-						viewModel.needsSnapshotSelection.rightPanel(true);
-					}
-                }
-
-				viewModel.diffable(data.diffable)
-
-
-                if (args[0]) { //Path Changed
-                    if ((data.info && data.info.mimetype !== "application/x-directory")
- 					|| (data.info2 && data.info2.mimetype !== "application/x-directory")) {
-                        loadVersions();
-                    }
-
-	                if (args[1] === "both" || args[1] === "leftPanel") {
-						setDetailsViewToDefault("leftPanel")
-					}
-					
-					if (args[1] === "both" || args[1] === "rightPanel") {
-						setDetailsViewToDefault("rightPanel")
-					}
-					
+				var panel = args[1];
+				
+				var info;
+				
+				if(panel == 'leftPanel'){
+					 info = data.info;
 				}else{
+					 info = data.info2;
+				}			
+				
+				if(!info){//FIXME
+					return;
+				}
+                
+                
+				if (info.mtime) {
+				    info.mtime = new Date(parseInt(info.mtime, 10) * 1000);
+				}
+
+				viewModel.info[panel](info)
+
+				if (info.entries) {
+						viewModel.entries[panel](info.entries);
+				}
+
+			
+				
+				if(allPanelsLoaded()){
+					viewModel.diffable(data.diffable)
+					viewModel.previewable(getPreviewable());
 					
-					if (args[1] === "both" || args[1] === "leftPanel") {
-						smartResetDetailsView("leftPanel")
-					}
-					
-					if (args[1] === "both" || args[1] === "rightPanel") {
-						smartResetDetailsView("rightPanel")
-					}
-					
-					
-					if (viewModel.detailsVisible.leftPanel() == 'diff' && viewModel.detailsVisible.leftPanel() == 'diff'){
-						if (viewModel.diffable()){
-							loadDiff()
-						}else{
-							setDetailsViewToDefault("leftPanel")
-							setDetailsViewToDefault("rightPanel")
-						}
+					if (args[0]) { //Path Changed
+	                	if (info && info.mimetype !== "application/x-directory") {
+	                        loadVersions();
+	                    }
+						resetDetailsView()	
+					}else{
+						smartResetDetailsView()
+						
 					}
 				}
 				
-				 updateHistory(); 
+				if(viewModel.detailsView() == 'preview' && info.preview){
+					loadPreview(panel);
+				}
+				
+
+				resize();
+				//updateHistory(); 
 					
             });
         }
 
         function failurePathInfo(transactionid, response, args) {
             if (response.status === 404) {
-                showError("No snapshots for path!", "No snapshots could be found for the specified path. This might result from a server configuration error, or you may have requested an outdated link.");
+                //showError("No snapshots for path!", "No snapshots could be found for the specified path. This might result from a server configuration error, or you may have requested an outdated link.");
             }else{
-				showError("Error loading path info!", "Status:" + response.status + ", Text:" + response.text);
+				//showError("Error loading path info!", "Status:" + response.status + ", Text:" + response.text);
 			}
         }
         Y.on('io:success', successPathInfo, Y, [pathChanged, panel]);

@@ -31,3 +31,36 @@ function bytesToSize(bytes) {
     var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[[i]];
 }
+
+function getPreviewable(){
+	for (var i=0; i < viewModel.activePanels().length; i++) {
+		var panel = viewModel.activePanels()[i];
+		if(viewModel.info[panel]() != null && viewModel.info[panel]().preview){
+			return true;
+		}
+	}
+	return false;
+}
+
+function switchToPreview(){
+	if(!(viewModel.previewable())){
+		return;
+	}
+	
+	viewModel.detailsView('preview')
+	for (var i=0; i < viewModel.activePanels().length; i++) {
+		var panel = viewModel.activePanels()[i]
+		if(viewModel.previewXML[panel]() == null && viewModel.info[panel]().preview){
+			loadPreview(panel)
+		}
+	};
+}
+
+function switchToDiff(){
+	if(!(viewModel.diffable())){
+		return;
+	}
+	
+	viewModel.detailsView('diff')
+	loadDiff()
+}

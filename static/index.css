@@ -1,0 +1,257 @@
+/* @override https://licht.stupidpupil.co.uk/static/index.css */
+
+/**/
+/* Layout */
+/**/
+
+html{
+	background-color:black;
+	padding:0;
+}
+
+body{
+	background-color:white;
+	height:100%;
+	width:100%;
+	position:fixed;
+	top: 0;
+	left: 0;
+	margin:0;
+}
+
+#header{
+	background-color:purple;
+}
+
+#toolbar{
+	background-color:red;
+	height:56px;
+}
+
+.toolbarButton:active img{
+	opacity:0.8;
+}
+
+.toolbarButton{
+	float:right;
+	text-align: center;
+	padding:4px 10px;
+}
+
+.toolbarButton img{
+	margin-bottom:-3px;
+}
+
+.toolbarButton span{
+	font-size:11px;
+	display:block;
+	text-shadow: #d4d4d4 0 1px 0;
+}
+
+#breadcrumbContainer{
+	height:1.6em;
+	background-color:magenta;
+	font-size:14px;
+}
+
+#breadcrumbContainer ul{
+	display:inline;
+}
+
+#breadcrumbContainer li{
+	list-style-type: none;
+	padding:0.25em 6px 0.25em 5px;
+	border-width:0px;
+}
+
+#breadcrumbs li{
+	float:left;
+	border-right-width:1px;
+}
+
+#detailViewButtons li{
+	float:right;
+	clear:none;
+	border-left-width:1px;
+	width:16px;
+	padding-top:3px;
+	text-align:center;
+}
+
+/* Panes */
+
+#panes{
+	width:100%;
+	height:50%; /*JS*/
+	position:absolute;
+}
+
+#diffContainer{
+	background-color:paleturquoise;
+	height:500px; /*JS*/
+	width:500px; /*JS*/
+	bottom: 0;
+	position:fixed;
+	z-index:5;
+}
+
+
+.pane{
+	background-color:pink;
+	width:auto;
+	height:100%;
+	position:relative;
+	overflow:hidden;
+	border-width:0px; /*Reset*/
+
+}
+
+
+#leftpane{
+	margin-right:0%;
+	z-index:1;
+
+}
+
+#rightpane{
+	width:50%;
+	position:absolute;
+	top: 0;
+	right:0;
+}
+
+/* Sidebar */
+
+.sidebar{
+	height:100%;
+	overflow:auto;
+	position:absolute;
+	border-width:0px; /*Reset*/
+}
+
+.sidebar .snapshots{
+	width:100%;
+	list-style-type: none;
+	padding:0;
+	margin:0;
+}
+
+
+#rightpane .sidebar{
+	right:0px;
+	top: 0px;
+	position:absolute;
+}
+
+
+
+/* Not Sidebar */
+
+.notsidebar{
+	overflow:auto;
+	height:100%;
+	width:auto;
+	background-color:red;
+}
+
+.summary{
+	width:100%;
+	top: 0px;
+}
+.summaryInner{
+	padding:10px;
+}
+
+.summary .icon{
+	float:left;
+	padding-right:10px;
+	
+}
+
+.summary span{
+	display:block;
+}
+
+.detailsView{
+	overflow:auto;
+}
+
+.directoryDetails{
+	background-color:mediumaquamarine;
+	width:100%;
+	height:100%;
+	overflow:auto;
+}
+
+
+.preview{
+	background-color:mediumaquamarine;
+	width:100%;
+	height:100%;
+	overflow:auto;
+}
+
+
+/* Sidebar width*/
+
+.sidebar{
+	width:150px;
+}
+
+
+#leftpane .notsidebar{
+	margin-left:150px;
+	margin-right:0px;
+
+}
+
+#rightpane .notsidebar{
+	margin-left:0px;
+	margin-right:150px;
+}
+
+#diffContainer{
+	margin:0 151px;
+}
+
+
+/* Z-index */
+
+#leftpane{
+	z-index:10;
+}
+
+#leftpane .sidebar{
+	z-index:20;
+}
+
+#rightpane{
+	z-index:1;
+}
+
+#rightpane .sidebar{
+	z-index:5;
+}
+
+#diffContainer{
+	z-index:12;
+}
+
+/* Border specificity */
+
+#leftpane{
+	border-right-width:1px;
+}
+
+#leftpane .sidebar{
+	border-right-width:1px;
+}
+
+#rightpane .sidebar{
+	border-left-width:1px;
+}
+
+.rubbish{
+	font-size:50px;
+	background-color:red;
+}

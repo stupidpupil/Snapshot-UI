@@ -1,0 +1,66 @@
+/* @override 
+	https://licht.stupidpupil.co.uk/static/directory.css
+*/
+
+.directoryDetails{
+	background-color:white;
+}
+
+.directoryDetails table{
+	width:100%;
+	border-collapse:collapse;
+}
+
+.directoryDetails th {
+	font-weight:normal;
+	background-color: #e8e8e8;
+	padding-left:10px;
+	border: 1px solid #acacac;
+	border-top:none;
+	font-size:12px;
+	text-align: left;
+}
+
+.directoryDetails th:first-of-type{
+	border-left:none;
+}
+
+
+.directoryDetails th:last-of-type{
+	border-right:none;
+}
+
+.directoryEntries th a{
+	color: #4f4f4f;
+	text-shadow: 0 1px 1px #fff;
+	text-decoration:none;
+}
+
+.directoryDetails td{
+	font-size:13px;
+	padding:2px 5px;
+}
+
+.directoryDetails tr:nth-child(odd) {
+	background-color: #d5e6fd;
+}
+
+.directoryDetails tr:nth-child(even) {
+	background-color: #fff;
+}
+
+.directoryDetails tr:hover {
+	background-color: #3875d7;
+	color: #fff;
+	cursor:pointer;
+}
+
+td.folder{
+	background: url(/static/img/folder16.png) no-repeat 15px 2px;
+	padding-left:45px;
+}
+
+td.document{
+	background: url(/static/img/document16.png) no-repeat 15px 2px;
+	padding-left:45px;
+}

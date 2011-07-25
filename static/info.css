@@ -1,0 +1,12 @@
+/* @override https://licht.stupidpupil.co.uk/static/info.css */
+
+.fileDetailsTable{
+	padding:15px;
+}
+
+.fileDetailsTable td:nth-of-type(1){
+	font-weight:bold;
+	padding-right:5px;
+	text-align:right;
+	vertical-align:text-top;
+}

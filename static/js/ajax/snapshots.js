@@ -28,7 +28,7 @@ function loadSnapshots() {
         }
 
         function failureSnapshots(id, response, args) {
-			showError("Error loading snapshots!", "Status:" + response.status + ", Text:" + response.text);
+			//showError("Error loading snapshots!", "Status:" + response.status + ", Text:" + response.text);
         }
 
         Y.on('io:success', completeSnapshots, Y, []);
@@ -70,7 +70,7 @@ function loadVersions() {
         }
 
         function failureVersions(id, response, args) {
-			showError("Error loading versions!", "Status:" + response.status + ", Text:" + response.text);
+			//showError("Error loading versions!", "Status:" + response.status + ", Text:" + response.text);
         }
 
         Y.on('io:success', completeVersions, Y, []);
