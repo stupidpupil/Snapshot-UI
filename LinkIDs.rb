@@ -51,8 +51,6 @@ module Blowfish
 end
 
 def generateLinkIdFor(path, snapshot)
-  o =  [('a'..'z'),('A'..'Z')].map{|i| i.to_a}.flatten 
-  rand  =  (0..rand(10)).map{ o[rand(o.length)]  }.join
   string = "#{rand}|#{path}|#{rand}|#{snapshot}|#{rand}"
   return CGI.escape(Base32.encode(Blowfish.encrypt(KEY, string)))
 end

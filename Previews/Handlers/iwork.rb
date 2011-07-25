@@ -1,21 +1,21 @@
 require 'plist'
 
-class IWorkPreviewer < PreviewHandler
+class IWorkPreviewer < ImagePreviewHandler
   
   def self.canPreviewPath(actualPath)
     return true if File.exists?(actualPath+"/QuickLook/Thumbnail.jpg")
-    return true if `unzip -t "#{actualPath}"`.match("testing: QuickLook/Thumbnail.jpg   OK").nil?
+    return true unless `unzip -t "#{actualPath}"`.match("testing: QuickLook/Thumbnail.jpg   OK").nil?
     return false
   end
   
-  def self.previewForPath(actualPath)
-    return PNGPreviewer.previewForPath(actualPath+"/QuickLook/Thumbnail.jpg") if File.exists?(actualPath+"/QuickLook/Thumbnail.jpg")
-
+  def self.imageForPath(actualPath)
+    return [200, {"Content-Type" => "image/jpeg","Cache-Control" => "private, max-age=600"}, [File.open(actualPath+"/QuickLook/Thumbnail.jpg").read]] if File.exists?(actualPath+"/QuickLook/Thumbnail.jpg")
+    
     unless File.directory?(actualPath)
       data = `unzip -p "#{actualPath}" "QuickLook/Thumbnail.jpg"` unless `unzip -t "#{actualPath}"`.match("testing: QuickLook/Thumbnail.jpg   OK").nil?
-      dataURI = "data:image/jpg;base64,#{Base64.encode64(data)}".delete("\n") unless data.nil? 
-      return eruby = Erubis::Eruby.new("<img src=\"#{dataURI}\"/>").evaluate(nil) unless dataURI.nil?
+      return [200, {"Content-Type" => "image/jpeg","Cache-Control" => "private, max-age=600"}, [data]] 
     end
+ 
 
   end
   
@@ -29,7 +29,7 @@ MIME::Type.new("application/x-iwork-pages-sffpages") {|t| t.extensions = "pages"
 MIME::Type.new("application/x-iwork-keynote-sffkey") {|t| t.extensions = "key"; MIME::Types.add(t)}
 
 
-class GrafflePreviewer < PreviewHandler
+class GrafflePreviewer < ImagePreviewHandler
   
   def self.canPreviewPath(actualPath)
     return true if File.exists?(actualPath+"/QuickLook/Thumbnail.tiff")
@@ -39,17 +39,21 @@ class GrafflePreviewer < PreviewHandler
   end 
   
   
-  def self.previewForPath(actualPath)
-  return JPEGPreviewer.previewForPath(actualPath+"/QuickLook/Thumbnail.tiff") if File.exists?(actualPath+"/QuickLook/Thumbnail.tiff")
-
-  unless File.directory?(actualPath)
-    doc =  Plist::parse_xml(actualPath)
-    dataURI = "data:image/tiff;base64,#{Base64.encode64(doc['QuickLookThumbnail'].read)}".delete("\n") unless doc['QuickLookThumbnail'].nil? 
-    return eruby = Erubis::Eruby.new("<img src=\"#{dataURI}\"/>").evaluate(nil) unless dataURI.nil?
-  end
+  def self.imageForPath(actualPath)
+    return JPEGPreviewer.imageForPath(actualPath+"/QuickLook/Thumbnail.tiff") if File.exists?(actualPath+"/QuickLook/Thumbnail.tiff")
   
-  return "<span class=\"previewError\"> Unable to generate preview.</span>" 
-end
+    unless File.directory?(actualPath)
+      doc =  Plist::parse_xml(actualPath)
+      intermediatePath = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.#{File.basename(actualPath)}.tiff"
+      int = File.new(intermediatePath,"w")
+      int.puts(doc['QuickLookThumbnail'].read)
+      int.close
+      jpeg = JPEGPreviewer.imageForPath(intermediatePath)
+      File.delete(intermediatePath)
+      return jpeg
+    end
+  
+  end
 end
 
 $handlers["application/x-graffle"] = GrafflePreviewer

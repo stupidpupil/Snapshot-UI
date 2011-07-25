@@ -13,7 +13,8 @@ module SPSnapshot
         snapshot2 = snapshots.find {|x| x.snapId == reqHash[:snapshot2]}
         return [410, {"Content-Type" => "text/plain"}, ["Path does not exist in snapshot."]] if snapshot1.nil? or snapshot2.nil?
 
-        return diffHandler(path, snapshot1, snapshot2, helper)
+        return diffHandler(env, helper)
+        
       end
     end
   end

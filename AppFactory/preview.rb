@@ -13,9 +13,10 @@ module SPSnapshot
         snapshot = snapshots.find {|x| x.snapId == reqHash[:snapshot]}
         return [410, {"Content-Type" => "text/plain"}, ["Path does not exist in snapshot."]] if snapshot.nil?
 
-        return previewHandler(path, snapshot, helper)
+        return previewHandler(env, helper)
       end
 
     end
   end
 end
+

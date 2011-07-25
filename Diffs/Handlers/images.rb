@@ -1,62 +1,58 @@
+class ImageDiffHandler < DiffHandler
+  
+  def self.respond(env, helper)
+    req = Rack::Request.new(env)
+    reqHash = requestToHash(req)      
+    
+    path = reqHash[:path]
 
-class PNGDiffHandler < DiffHandler
-  def self.diff(relativePath, snapshot1, snapshot2, helper)
-    maxResolution = "512x512"
-    abs1 = helper.absPathForRelPathAndSnapshot(relativePath, snapshot1)
-    abs2 = helper.absPathForRelPathAndSnapshot(relativePath, snapshot2)
-    in1 = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.1.#{File.basename(abs1)}"
-    in2 = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.2.#{File.basename(abs1)}"
+    snapshots = helper.snapshotsForPath(path)
+
+    snapshot1 = snapshots.find {|x| x.snapId == reqHash[:snapshot]}
+    snapshot2 = snapshots.find {|x| x.snapId == reqHash[:snapshot2]}
     
-    `cp "#{abs1}" "#{in1}"`
-    `cp "#{abs2}" "#{in2}"`
+    if req.params.has_key?("image")
+      
+      return self.imageDiff(path, snapshot1, snapshot2, helper)
+      
+    else
     
-    pngOut = `convert -fuzz 5% -compose change-mask -composite "#{in1}" "#{in2}" -thumbnail "#{maxResolution}>" -strip png:-`
-    dataURI = "data:image/png;base64,#{Base64.encode64(pngOut)}".delete("\n")
-    File.delete(in1)
-    File.delete(in2)
+      eruby = Erubis::Eruby.new(File.read("Previews/Preview.rxhtml"))
     
-    return eruby = Erubis::Eruby.new("<img src=\"#{dataURI}\"/>").evaluate(nil)
+      context = {:previewContent => "<img src=\"/diff/#{generateLinkIdFor(path, snapshot1.snapId)}/#{generateLinkIdFor(path, snapshot2.snapId)}?image\"/>"}
+    
+      return [200, {"Content-Type" => "application/xhtml+xml","Cache-Control" => "private, max-age=600"}, [eruby.evaluate(context)]]
+    
+    end
+    
   end
   
-end
-
-class JPEGDiffHandler < DiffHandler
-  def self.diff(relativePath, snapshot1, snapshot2, helper)
+  
+  def self.imageDiff(relativePath, snapshot1, snapshot2, helper)
+    
     maxResolution = "512x512"
     maxSizeBytes = 290*1024
     quality = 90
-  
+
     abs1 = helper.absPathForRelPathAndSnapshot(relativePath, snapshot1)
     abs2 = helper.absPathForRelPathAndSnapshot(relativePath, snapshot2)
     in1 = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.1.#{File.basename(abs1)}"
     in2 = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.2.#{File.basename(abs1)}"
-    
+
     `cp "#{abs1}" "#{in1}"`
     `cp "#{abs2}" "#{in2}"`
-    
-    intermediatePath = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.#{File.basename(abs1)}.png"
-    
-    pngOut = `convert -fuzz 5% -compose change-mask -composite "#{in1}" "#{in2}" -thumbnail "#{maxResolution}>" -strip png:-`
-    
-    File.delete(in1)
-    File.delete(in2)
-    
-    #outputSizeBytes = maxSizeBytes + 1
-    #while outputSizeBytes > maxSizeBytes and quality-7 >= 5
-    #	quality -= 7
-    #	jpegOut = `convert "#{intermediatePath}" -quality #{quality} jpg:-`
-    #	outputSizeBytes = jpegOut.size
-    #end
-    #
-    #File.delete(intermediatePath)
 
-    dataURI = "data:image/png;base64,#{Base64.encode64(pngOut)}".delete("\n")
-    return eruby = Erubis::Eruby.new("<img src=\"#{dataURI}\"/>").evaluate(nil)
+
+    pngOut = `convert -fuzz 5% -compose difference -composite "#{in1}" "#{in2}" -thumbnail "#{maxResolution}>" -strip png:-`
+    
+    return [200, {"Content-Type" => "image/png","Cache-Control" => "private, max-age=600"}, [pngOut]]
     
   end
   
 end
 
-$diffHandlers["image/png"] = PNGDiffHandler
-$diffHandlers["image/jpeg"] = JPEGDiffHandler
+
+$diffHandlers["image/png"] = ImageDiffHandler
+$diffHandlers["image/jpeg"] = ImageDiffHandler
+$diffHandlers["image/vnd.adobe.photoshop"] = ImageDiffHandler
 

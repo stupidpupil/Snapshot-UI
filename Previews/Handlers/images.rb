@@ -1,20 +1,8 @@
-
-class PNGPreviewer < PreviewHandler
-  def self.previewForPath(actualPath)
-    maxResolution = "512x512"
-    intermediatePath = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.#{File.basename(actualPath)}"
-    `cp "#{actualPath}" "#{intermediatePath}"`
-    pngOut = `convert "#{intermediatePath}" -thumbnail "#{maxResolution}>" -strip png:-`
-    dataURI = "data:image/png;base64,#{Base64.encode64(pngOut)}".delete("\n")
-    File.delete(intermediatePath)
-    return eruby = Erubis::Eruby.new("<img src=\"#{dataURI}\"/>").evaluate(nil)
-  end
+class JPEGPreviewer < ImagePreviewHandler
   
-end
-
-class JPEGPreviewer < PreviewHandler
-  def self.previewForPath(actualPath)
-    maxResolution = "512x512"
+  def self.imageForPath(actualPath)
+    
+    maxResolution = "768x768"
     maxSizeBytes = 290*1024
     quality = 90
 
@@ -23,7 +11,7 @@ class JPEGPreviewer < PreviewHandler
 
     `cp "#{actualPath}" "#{intermediatePath}"`
 
-    `convert "#{intermediatePath}" -thumbnail "#{maxResolution}>" -strip "#{intermediatePath}.tiff"`
+    `convert "#{intermediatePath}[0]" -thumbnail "#{maxResolution}>" -strip "#{intermediatePath}.tiff"`
 
     outputSizeBytes = maxSizeBytes + 1
     while outputSizeBytes > maxSizeBytes and quality-7 >= 5
@@ -34,9 +22,21 @@ class JPEGPreviewer < PreviewHandler
 
     File.delete(intermediatePath)
     File.delete("#{intermediatePath}.tiff")
+    
+    return [200, {"Content-Type" => "image/jpeg","Cache-Control" => "private, max-age=600"}, [jpegOut]]
+    
+  end
+  
+end
 
-    dataURI = "data:image/jpeg;base64,#{Base64.encode64(jpegOut)}".delete("\n")
-    return eruby = Erubis::Eruby.new("<img src=\"#{dataURI}\"/>").evaluate(nil)
+class PNGPreviewer < ImagePreviewHandler
+  def self.imageForPath(actualPath)
+    maxResolution = "768x768"
+    intermediatePath = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.#{File.basename(actualPath)}"
+    `cp "#{actualPath}" "#{intermediatePath}"`
+    pngOut = `convert "#{intermediatePath}" -thumbnail "#{maxResolution}>" -strip png:-`
+    File.delete(intermediatePath)
+    return [200, {"Content-Type" => "image/png","Cache-Control" => "private, max-age=600"}, [pngOut]]
   end
   
 end
@@ -46,16 +46,16 @@ $handlers["image/jpeg"] = JPEGPreviewer
 $handlers["image/tiff"] = JPEGPreviewer
 $handlers["image/vnd.adobe.photoshop"] = JPEGPreviewer
 
-class PDFPreviewer < PreviewHandler
-  def self.previewForPath(actualPath)
+class PDFPreviewer < ImagePreviewHandler
+  def self.imageForPath(actualPath)
     maxResolution = "1024x1024"
     intermediatePath = "#{Dir.tmpdir}/qlTmpDir.#{Process.pid}.#{File.basename(actualPath)}"
     `cp "#{actualPath}" "#{intermediatePath}"`
-    pngOut = `convert "#{intermediatePath}[0]" -thumbnail "#{maxResolution}>" -strip png:-`  
-    dataURI = "data:image/png;base64,#{Base64.encode64(pngOut)}".delete("\n")
+    pngOut = `convert "#{intermediatePath}[0]" -thumbnail "#{maxResolution}>" -strip png:-`
     File.delete(intermediatePath)
-    return eruby = Erubis::Eruby.new("<img src=\"#{dataURI}\"/>").evaluate(nil)
+    return [200, {"Content-Type" => "image/png","Cache-Control" => "private, max-age=600"}, [pngOut]]
   end
 end
 
 $handlers["application/pdf"] = PDFPreviewer
+$handlers["application/postscript"] = PDFPreviewer

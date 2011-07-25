@@ -2,17 +2,22 @@ require 'erubis'
 
 $handlers = {} unless $handlers
 
-def previewHandler(path, snapshot, helper)
-  eruby = Erubis::Eruby.new(File.read("Previews/Preview.rxhtml"))
+def previewHandler(env, helper)
+  req = Rack::Request.new(env)
+  reqHash = requestToHash(req)      
   
-    actualPath = helper.absPathForRelPathAndSnapshot(path, snapshot)
-    
-    mimetype = MIME::Types.type_for_path(actualPath)[0].to_s
-  
-    context = {:previewContent => $handlers[mimetype].previewForPath(actualPath)}
-  
-  return [200, {"Content-Type" => "application/xhtml+xml","Cache-Control" => "private, max-age=600"}, [eruby.evaluate(context)]]
+  path = reqHash[:path]
 
+  snapshots = helper.snapshotsForPath(path)
+
+  snapshot = snapshots.find {|x| x.snapId == reqHash[:snapshot]}
+  
+  actualPath = helper.absPathForRelPathAndSnapshot(path, snapshot)
+  
+  mimetype = MIME::Types.type_for_path(actualPath)[0].to_s
+  
+  return $handlers[mimetype].respond(env, helper)
+  
 end
 
 def canPreview(actualPath)
