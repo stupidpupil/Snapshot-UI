@@ -5,7 +5,8 @@ $diffHandlers = {} unless $diffHandlers
 def diffHandler(relativePath, snapshot1, snapshot2, helper)
   eruby = Erubis::Eruby.new(File.read("Diffs/Diff.rxhtml"))
   
-    context = {:diffContent => TextDiffHandler.diff(relativePath, snapshot1, snapshot2, helper)}
+    mime = MIME::Types.type_for_path(helper.absPathForRelPathAndSnapshot(relativePath, snapshot2))[0].to_s
+    context = {:diffContent =>  $diffHandlers[mime].diff(relativePath, snapshot1, snapshot2, helper)}
   
   return [200, {"Content-Type" => "application/xhtml+xml", "Expires" => (Time.now + 10.years).rfc2822,"Cache-Control" => "private, max-age=5000000"}, [eruby.evaluate(context)]]
 
@@ -27,3 +28,4 @@ end
 
 require "Diffs/Handlers/HandlerClass.rb"
 require "Diffs/Handlers/Text.rb"
+require "Diffs/Handlers/images.rb"
