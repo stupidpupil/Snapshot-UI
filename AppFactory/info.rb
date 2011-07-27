@@ -40,6 +40,7 @@ def infoHashFor(path, snapshot)
   retHash[:ctime] = File.ctime(absolutePath).to_i
   retHash[:mtime] = File.mtime(absolutePath).to_i
   retHash[:size] = (File.isFolder?(absolutePath) ? nil : File.size(absolutePath))
+  retHash[:directory] = File.directory?(absolutePath)
   
   return retHash
   
