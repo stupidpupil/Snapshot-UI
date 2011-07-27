@@ -51,15 +51,15 @@ module Blowfish
 end
 
 def generateLinkIdFor(path, snapshot)
-  string = "#{rand}|#{path}|#{rand}|#{snapshot}|#{rand}"
+  string = "#{path}|#{snapshot}"
   return CGI.escape(Base32.encode(Blowfish.encrypt(KEY, string)))
 end
 
 def degenerateLinkId(linkID)
   string = Blowfish.decrypt(KEY, Base32.decode(CGI.unescape(linkID)))
   split = string.split("|")
-  path = split[1]
-  snapshot = split[-2]
+  path = split[0]
+  snapshot = split[1]
   
   hash = {:path => path, :snapshot => snapshot}
   return hash
