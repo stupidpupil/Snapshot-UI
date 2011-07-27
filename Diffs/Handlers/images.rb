@@ -30,9 +30,7 @@ class ImageDiffHandler < DiffHandler
   
   def self.imageDiff(relativePath, snapshot1, snapshot2, helper)
     
-    maxResolution = "512x512"
-    maxSizeBytes = 290*1024
-    quality = 90
+    maxResolution = "768x768"
 
     abs1 = helper.absPathForRelPathAndSnapshot(relativePath, snapshot1)
     abs2 = helper.absPathForRelPathAndSnapshot(relativePath, snapshot2)
@@ -43,7 +41,7 @@ class ImageDiffHandler < DiffHandler
     `cp "#{abs2}" "#{in2}"`
 
 
-    pngOut = `convert -fuzz 5% -compose difference -composite "#{in1}" "#{in2}" -thumbnail "#{maxResolution}>" -strip png:-`
+    pngOut = `convert -fuzz 5% -compose difference -composite "#{in1}[0]" "#{in2}[0]" -thumbnail "#{maxResolution}>" -strip png:-`
     
     return [200, {"Content-Type" => "image/png","Cache-Control" => "private, max-age=600"}, [pngOut]]
     
@@ -55,4 +53,5 @@ end
 $diffHandlers["image/png"] = ImageDiffHandler
 $diffHandlers["image/jpeg"] = ImageDiffHandler
 $diffHandlers["image/vnd.adobe.photoshop"] = ImageDiffHandler
+$diffHandlers["application/postscript"] = ImageDiffHandler
 

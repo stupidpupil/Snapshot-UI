@@ -51,15 +51,21 @@ class ImagePreviewHandler < PreviewHandler
       return self.imageForPath(actualPath)
       
     else
-    
+      
+      actualPath = helper.absPathForRelPathAndSnapshot(path, snapshot)
+          
       eruby = Erubis::Eruby.new(File.read("Previews/Preview.rxhtml"))
           
-      context = {:previewContent => "<img src=\"/preview/#{generateLinkIdFor(path, snapshot.snapId)}/?image\"/>"}
+      context = {:previewContent => "<img src=\"/preview/#{generateLinkIdFor(path, snapshot.snapId)}/?image\"/>#{self.captionForPath(actualPath)}"}
     
       return [200, {"Content-Type" => "application/xhtml+xml","Cache-Control" => "private, max-age=600"}, [eruby.evaluate(context)]]
     
     end
     
+  end
+  
+  def self.captionForPath(actualPath)
+    return ""
   end
   
   def self.imageForPath(actualPath)

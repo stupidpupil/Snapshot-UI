@@ -166,7 +166,7 @@ class TextDiffHandler < DiffHandler
     abs1 = helper.absPathForRelPathAndSnapshot(relativePath, snapshot1)
     abs2 = helper.absPathForRelPathAndSnapshot(relativePath, snapshot2)
     out = `diff --unified "#{abs2}" "#{abs1}"`.lines.to_a[2..-1].to_s
-    return "<span class='info'>The text is identical.</span>" if out.strip.length == 0
+    return "<div class='info'>No Differences</div>" if out.strip.length == 0
     
     difftype = "sbs"
     tables = UnifiedDiff.new(out, difftype)

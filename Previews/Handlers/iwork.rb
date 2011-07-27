@@ -4,7 +4,7 @@ class IWorkPreviewer < ImagePreviewHandler
   
   def self.canPreviewPath(actualPath)
     return true if File.exists?(actualPath+"/QuickLook/Thumbnail.jpg")
-    return true unless `unzip -t "#{actualPath}"`.match("testing: QuickLook/Thumbnail.jpg   OK").nil?
+    return true unless File.directory?(actualPath) or `unzip -t "#{actualPath}"`.match("testing: QuickLook/Thumbnail.jpg   OK").nil?
     return false
   end
   
@@ -33,8 +33,7 @@ class GrafflePreviewer < ImagePreviewHandler
   
   def self.canPreviewPath(actualPath)
     return true if File.exists?(actualPath+"/QuickLook/Thumbnail.tiff")
-    doc =  Plist::parse_xml(actualPath)
-    return true unless doc['QuickLookThumbnail'].nil? 
+    return true unless File.directory?(actualPath) or Plist::parse_xml(actualPath)['QuickLookThumbnail'].nil? 
     return false
   end 
   
