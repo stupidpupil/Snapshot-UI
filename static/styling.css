@@ -8,6 +8,8 @@ html{
 
 #toolbar{
 		background:-webkit-gradient(linear, left top, left bottom, from(#cbcbcb), to(#a5a5a5));
+	background: -moz-linear-gradient(top, #cbcbcb 0%, #a5a5a5 100%);
+
 	border-bottom: 1px solid #696969;
 }
 
@@ -16,6 +18,7 @@ html{
 	border-bottom:1px solid #aaa;
 	color: #acd1fd;
 		background:-webkit-gradient(linear, left top, left bottom, from(#fff), to(#dedede));
+	background: -moz-linear-gradient(top, #fff 0%, #dedede 100%);
 
 }
 
@@ -23,7 +26,7 @@ html{
 
 #breadcrumbContainer ul li{
 	color: #2d2d2d;
-	text-shadow: #fff 0 1px 2px;
+	text-shadow: 0px 1px 2px #fff;
 	font-weight: bold;
 	border-color:#909090;
 	border-style:solid;
@@ -33,14 +36,16 @@ html{
 
 #breadcrumbContainer ul li:active{
 	color: #white;
-	text-shadow: #221a8c 0 1px 1px;
+	text-shadow: 0px 1px 1px #221a8c;
 	background:-webkit-gradient(linear, left top, left bottom, from(#acd1fd), to(#4382cd));
+	background: -moz-linear-gradient(top, #acd1fd 0%, #4382cd 100%);
+
 }
 
 #breadcrumbs li:first-of-type:before{
 	content:"";
 	padding-left:20px;
-	background: url(images/home.png) no-repeat 0 0.1em;
+	background: url(/static/img/home.png) no-repeat 0 0.1em;
 }
 
 #breadcrumbs li:after{
@@ -58,6 +63,7 @@ html{
 
 #detailViewButtons .active{
 	background:-webkit-gradient(linear, left top, left bottom, from(#999), to(#222));
+	background: -moz-linear-gradient(top, #999 0%, #222 100%);
 }
 
 #detailViewButtons .disabled img{
@@ -111,20 +117,21 @@ html{
 }
 
 .sidebar .snapshots .selected{
-	color:white;
+	color: white;
 	padding:2px 0px;
 	font-weight:bold;
 		background-image: -webkit-gradient(
     linear,
     left top,
     left bottom,
-    color-stop(0, rgb(108,164,216)),
-    color-stop(1, rgb(50,106,179))
+    color-stop(0, #7bb1db),
+    color-stop(1, #326ab3)
 );
+	background: -moz-linear-gradient(top, #7bb1db 0%, #326ab3 100%);
 	border-top: 1px solid #2869b3;
 	border-bottom: 1px solid #2869b3;
 	font-weight: bold;
-	text-shadow: #444 0 1px 0;
+	text-shadow: 0px 1px 0px #444;
 }
 
 /* Not Sidebar */
@@ -138,6 +145,8 @@ html{
     color-stop(0, #ddd),
     color-stop(1, #bbb)
 );
+	background: -moz-linear-gradient(top, #ddd 0%, #bbb 100%);
+
 }
 
 

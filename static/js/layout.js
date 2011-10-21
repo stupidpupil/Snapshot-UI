@@ -35,10 +35,10 @@ function showRightPanel(bool){
 		viewModel.activePanels(["leftPanel"])
 	
 		viewModel.diffable(false)
-		updateHistory();
+		updateTitleAndHistory();
 		
 		if (viewModel.detailsView() == 'diff'){
-			setDetailsViewToDefault('leftPanel')
+			resetDetailsView()
 		}
     
 	}

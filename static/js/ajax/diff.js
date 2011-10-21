@@ -1,4 +1,5 @@
 function loadDiff() {
+	resize();
 	
     YUI().use("io-queue", "querystring-stringify-simple", function (Y) {
         var uri = "/diff";

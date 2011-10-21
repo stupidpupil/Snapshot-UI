@@ -1,3 +1,13 @@
+function activePanelsHaveSnapshots(){
+	for (var i=0; i < viewModel.activePanels().length; i++) {
+		panel = viewModel.activePanels()[i];
+		if(viewModel.selectedSnapshot[panel]() == null){
+			return false;
+		}
+	};
+	return true;
+}
+
 function decryptLink(linkID, panel) {
     YUI().use("io-queue", function (Y) {
         var uri = "/decrypt";
@@ -17,10 +27,11 @@ function decryptLink(linkID, panel) {
                 }
                 viewModel.selectedSnapshot[args[0]](data.snapshot);
 
-                if (viewModel.selectedSnapshot.leftPanel() && (!viewModel.showingRightPanel() || viewModel.selectedSnapshot.rightPanel())) {
-                    changePath(data.path);
-                }
-				ko.applyBindings(viewModel);
+				if(activePanelsHaveSnapshots()){
+					changePath(data.path, true)
+					ko.applyBindings(viewModel);
+				}
+								
 
             });
         }
@@ -36,33 +47,38 @@ function decryptLink(linkID, panel) {
 
 // Helpers?
 
-function updateHistory() { /* Errors abound */
+function updateTitleAndHistory(justTitle) { /* Errors abound */
 	var title, linkURI;
     title = ""
 	linkURI = ""
 
-	if(viewModel.info.leftPanel() != null){
+	if(viewModel.activePanels().indexOf("leftPanel") != -1 && viewModel.info.leftPanel() != null){
 		title = title + gPath + " @ " + viewModel.selectedSnapshot.leftPanel();
 		linkURI = linkURI + "/link/" + viewModel.info.leftPanel().link;
 	}
 	
-	if(viewModel.info.rightPanel() != null){
+	if(viewModel.activePanels().indexOf("rightPanel") != -1 && viewModel.info.rightPanel() != null){
 		title = title + " & " + viewModel.selectedSnapshot.rightPanel();
 		linkURI = linkURI + "/" + viewModel.info.rightPanel().link;
 	}
 	
-    window.history.pushState(null, title, linkURI);
+	if(!(justTitle)){
+    	window.history.pushState(null, title, linkURI);
+	}
+	
     document.title = title;
 }
 
 function parseLocation() {
     decryptLink(location.pathname.split("/")[2], "leftPanel");
     if (location.pathname.split("/")[3]) {
-		showRightPanel(true);
+		$('#leftpane').css("marginRight","50%")
+		resize();
+		viewModel.activePanels(["leftPanel","rightPanel"])
         decryptLink(location.pathname.split("/")[3], "rightPanel");
     } else {
-		if(viewModel.showingRightPanel() === true){
-        	showRightPanel(false);
-		}
+		$('#leftpane').css("marginRight","0%")
+		resize();
+		viewModel.activePanels(["leftPanel"])
     }
 }

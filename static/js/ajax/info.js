@@ -1,5 +1,5 @@
 
-function allPanelsLoaded(){
+function allPanelsLoaded(){//Bollocks! Problems if one doesn't have a (working) selected snapshot
 	var panel;
 	for (var i=0; i < viewModel.activePanels().length; i++) {
 		panel = viewModel.activePanels()[i];
@@ -30,6 +30,15 @@ function smartResetDetailsView(){
 	if (viewModel.detailsView() == 'preview'){
 		if(!(viewModel.previewable)){
 			resetDetailsView()
+		}else{
+			
+			for (var i=0; i < viewModel.activePanels().length; i++) {
+				var panel = viewModel.activePanels()[i];
+				if(viewModel.previewXML[panel]() == null){
+					loadPreview(panel);
+				}
+			};
+			
 		}
 		return;
 	}
@@ -64,7 +73,7 @@ function resetDetailsView(){
 	viewModel.detailsView('info')
 }
 
-function loadInfo(pathChanged, panel) {
+function loadInfo(pathChanged, panel, suppressHistory) {
 	
 
 	viewModel.info[panel](null)
@@ -137,6 +146,7 @@ function loadInfo(pathChanged, panel) {
 				if(allPanelsLoaded()){
 					viewModel.diffable(data.diffable)
 					viewModel.previewable(getPreviewable());
+					viewModel.entreable(getEntreable());
 					
 					if (args[0]) { //Path Changed
 	                	if (info && info.mimetype !== "application/x-directory") {
@@ -149,13 +159,13 @@ function loadInfo(pathChanged, panel) {
 					}
 				}
 				
-				if(viewModel.detailsView() == 'preview' && info.preview){
-					loadPreview(panel);
-				}
+
 				
 
 				resize();
-				//updateHistory(); 
+				
+				var suppressHistory = args[2]
+				updateTitleAndHistory(suppressHistory); 
 					
             });
         }
@@ -167,7 +177,7 @@ function loadInfo(pathChanged, panel) {
 				//showError("Error loading path info!", "Status:" + response.status + ", Text:" + response.text);
 			}
         }
-        Y.on('io:success', successPathInfo, Y, [pathChanged, panel]);
+        Y.on('io:success', successPathInfo, Y, [pathChanged, panel, suppressHistory]);
         Y.on('io:failure', failurePathInfo, Y, []);
         var request = Y.io.queue(uri, cfg);
     });

@@ -13,15 +13,16 @@ function generatePathComponentsForPath(path){
 }
 
 
-function changePath(newPath) {
+function changePath(newPath, suppressHistory) {
     var snapDiv, h2, i;
 
     gPath = newPath;
 
 	viewModel.detailsView(null)
 	
-	loadInfo(true, "leftPanel");
-	loadInfo(true, "rightPanel");
+	
+	loadInfo(true, "leftPanel", suppressHistory);
+	loadInfo(true, "rightPanel", suppressHistory);
 	
     loadSnapshots();
     viewModel.pathComponents(generatePathComponentsForPath(gPath));

@@ -10,3 +10,44 @@
 	text-align:right;
 	vertical-align:text-top;
 }
+
+.download{
+	display:inline-block;
+	color: white;
+	margin:5px 15px;
+	padding-left:35px;
+	text-decoration: none;
+	padding:9px 15px 2px 10px;
+	background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #4c4c4c),
+    color-stop(0.5, #444),
+    color-stop(0.5, #3b3b3b),
+    color-stop(1, #323232)
+);
+	background: -moz-linear-gradient(top, #4c4c4c 0%, #444 50%, #3b3b3b 50%, #323232 100%);
+	border: 1px solid #bebebe;
+	text-shadow: #444 0 0 2px;
+	font-weight: bold;
+}
+
+.download img{
+	float:left;
+	margin-top:-7px;
+	padding-right:5px;
+}
+
+.download:active{
+	background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(1, #4c4c4c),
+    color-stop(0.5, #444),
+    color-stop(0.5, #3b3b3b),
+    color-stop(0, #323232));
+    background: -moz-linear-gradient(bottom, #4c4c4c 0%, #444 50%, #3b3b3b 50%, #323232 100%);
+
+}

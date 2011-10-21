@@ -2,13 +2,25 @@
 
 #diffContainer{
 	color:white;
-	background-color: #262626;
 	overflow:auto;
 	text-align:center;
+	background-color: #292929;
+}
+
+
+
+#diffContainer .info{
+	text-shadow: #030303 -1px -2px 3px;
+	font-size: 24px;
+	display:block;
+	padding:15px;
+	margin:15px;
+	color: #fff;
 }
 
 #diffContainer img{
 	margin:15px;
+	-moz-box-shadow: 0px 2px 6px #131313;
 	-webkit-box-shadow: 0px 2px 6px #131313;
 	max-width:90%;
 	max-height:90%;
@@ -30,6 +42,7 @@ table.filecontent td.line-code pre {
 	word-break: break-word;
 	padding: 0 10px 0 30px;
 	text-wrap:normal;
+	white-space:normal;
 }
 
 .CodeRay .an { color:#E7BE69 }                      /* html attribute */  

@@ -18,7 +18,6 @@
 	<script type="text/ecmascript" src="/static/js/3rd/jquery.js"></script>
 	<script type="text/ecmascript" src="/static/js/3rd/jquery.tmpl.js"></script>
 	<script type="text/ecmascript" src="/static/js/3rd/knockout.js"></script>
-	<script type="text/ecmascript" src="/static/js/3rd/tablesort.js"></script>
 	<script type="text/ecmascript" src="/static/js/3rd/yui.js"></script>
 	<script type="text/ecmascript" src="/static/js/ajax/about.js"></script>
 	<script type="text/ecmascript" src="/static/js/ajax/diff.js"></script>
@@ -46,6 +45,7 @@
 			detailsView: ko.observable(),
 			diffable : ko.observable(),
 			previewable : ko.observable(),
+			entreable : ko.observable(),
 			showSnapshotsAs : ko.observable(),
 			activePanels : ko.observableArray(["leftPanel"])
 	    };
@@ -60,6 +60,7 @@
 				}
 		    }
 		};
+	
 	</script>
 	
 	<script type="application/xhtml+xml" id="summaryInnerTemplate">
@@ -134,6 +135,8 @@
 	
 	<script type="application/xhtml+xml" id="detailsTemplate">
 	<![CDATA[	
+	
+	<table class="fileDetailsTable" >	
 		<tr>
 			<td>Kind</td>
 			<td data-bind="text:kind"></td>
@@ -143,7 +146,9 @@
 			<td>Size</td>
 			<td data-bind="text:bytesToSize(parseInt(size, 10)) + ' (' + size + ' bytes)'"></td>
 		</tr>
-		
+	</table>
+	
+	<a href="/download/${link}" class="download"><img src="/static/img/download.png"/>Download…</a>
 		
 		
 	]]>
@@ -189,10 +194,10 @@
 			</ul>
 			
 			<ul id="detailViewButtons">
-				<li data-bind="css : {disabled: !(viewModel.diffable()), active: (viewModel.detailsView() == 'diff')}, click : function () {switchToDiff()}"><img src="/static/images/diff.png"/></li>
-				<li data-bind="css : {active: (viewModel.detailsView() == 'preview'), disabled: !(viewModel.previewable())}, click: function (){switchToPreview()}"><img src="/static/images/preview.png"/></li>
-				<li data-bind="css : {active: (viewModel.detailsView() == 'entries')},  click: function (){viewModel.detailsView('entries')}"><img src="/static/images/contents.png"/></li>
-				<li data-bind="css : {active: (viewModel.detailsView() == 'info')}, click: function (){viewModel.detailsView('info')}"><img src="/static/images/info.png"/></li>
+				<li data-bind="css : {disabled: !(viewModel.diffable()), active: (viewModel.detailsView() == 'diff')}, click : function () {switchToDiff()}"><img src="/static/img/diff.png"/></li>
+				<li data-bind="css : {active: (viewModel.detailsView() == 'preview'), disabled: !(viewModel.previewable())}, click: function (){switchToPreview()}"><img src="/static/img/preview.png"/></li>
+				<li data-bind="css : {active: (viewModel.detailsView() == 'entries'), disabled: !(viewModel.entreable())},  click: function (){if (viewModel.entreable()) viewModel.detailsView('entries');}"><img src="/static/img/contents.png"/></li>
+				<li data-bind="css : {active: (viewModel.detailsView() == 'info')}, click: function (){viewModel.detailsView('info')}"><img src="/static/img/info.png"/></li>
 			</ul>
 		</div>
 		
@@ -212,7 +217,7 @@
 				<div class="summary" id="leftSummary" data-bind="fadeInVisible: (info.leftPanel() != null)">
 					
 					<div class="summaryInner" data-bind="template: {name: 'summaryInnerTemplate', data: info['leftPanel']}">
-					<img class="icon" src="/static/images/tophat.png"/>
+					<img class="icon" src="/static/img/tophat.png"/>
 					<span class="pathname">Code</span>
 					<span class="mtime">2nd November 1989</span>
 					</div>
@@ -221,18 +226,19 @@
 				<div class="detailsView" id="leftDetailsView" data-bind="fadeInVisible: (info.leftPanel() != null)">
 					
 					<div class="directoryDetails" data-bind="fadeInVisible: detailsView() == 'entries'">
-						<table id="directoryEntriesLeft">
+						<table id="leftEntriesTable"  class="tablesorter">
 							<col class="name"/>
 							<col class="mtime"/>
-							<col class="size"/>					
-							<tr><th>Name</th><th>Date Modified</th><th>Size</th></tr>
+							<col class="size"/>		
+							<thead> 			
+							<tr><th data-bind="click:function(){sortEntries('leftPanel','filename')}">Name</th><th data-bind="click:function(){sortEntries('leftPanel','mtime')}">Date Modified</th><th data-bind="click:function(){sortEntries('leftPanel','size')}">Size</th></tr>
+							</thead>
 							<tbody class="directoryEntriesBody" data-bind="template: {name:'entryTemplate', foreach: entries['leftPanel'], templateOptions:{currentPath:gPath}}"></tbody>
 						</table>
 					</div>
 					
 					
-					<div class="fileDetails" data-bind="fadeInVisible: detailsView() == 'info'">
-						<table class="fileDetailsTable"  data-bind="template: {name:'detailsTemplate', data:info['leftPanel']}"></table>
+					<div class="fileDetails" data-bind="fadeInVisible: detailsView() == 'info',template: {name:'detailsTemplate', data:info['leftPanel']}">
 					</div>
 					
 					<div class="preview" data-bind="fadeInVisible: detailsView() == 'preview', template:{name:'previewTemplate', data:previewXML.leftPanel}"/>
@@ -252,7 +258,7 @@
 				<div class="summary" id="rightSummary" data-bind="fadeInVisible: (info.rightPanel() != null)">
 					
 					<div class="summaryInner" data-bind="template: {name: 'summaryInnerTemplate', data: info['rightPanel']}">
-					<img class="icon" src="/static/images/tophat.png"/>
+					<img class="icon" src="/static/img/tophat.png"/>
 					<span class="pathname">Code</span>
 					<span class="mtime">2nd November 1989</span>
 					</div>
@@ -261,18 +267,19 @@
 				<div class="detailsView" id="rightDetailsView" data-bind="fadeInVisible: (info.rightPanel() != null)">
 					
 					<div class="directoryDetails" data-bind="fadeInVisible: detailsView() == 'entries'">
-						<table id="directoryEntriesright">
+						<table id="rightEntriesTable"  class="tablesorter">
 							<col class="name"/>
 							<col class="mtime"/>
-							<col class="size"/>					
+							<col class="size"/>	
+							<thead>				
 							<tr><th>Name</th><th>Date Modified</th><th>Size</th></tr>
+							</thead>
 							<tbody class="directoryEntriesBody" data-bind="template: {name:'entryTemplate', foreach: entries['rightPanel'], templateOptions:{currentPath:gPath}}"></tbody>
 						</table>
 					</div>
 					
 					
-					<div class="fileDetails" data-bind="fadeInVisible: detailsView() == 'info'">
-						<table class="fileDetailsTable"  data-bind="template: {name:'detailsTemplate', data:info['rightPanel']}"></table>
+					<div class="fileDetails" data-bind="fadeInVisible: detailsView() == 'info',template: {name:'detailsTemplate', data:info['rightPanel']}">
 					</div>
 					
 					<div class="preview" data-bind="fadeInVisible: detailsView() == 'preview', template:{name:'previewTemplate', data:previewXML.rightPanel}"/>

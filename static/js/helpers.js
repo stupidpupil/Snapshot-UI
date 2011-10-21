@@ -19,6 +19,21 @@ function getElementForPanelAndClass(panelId, className) {
     return xpathResult.singleNodeValue;
 }
 
+function sortEntries(panel, sortBy){
+	var entries = viewModel.entries[panel]().slice();
+	
+	entries = entries.sort(function(a,b){
+		 if (a[sortBy] < b[sortBy]) return -1;
+		    if (a[sortBy] > b[sortBy]) return 1;
+		    return 0;	
+	});
+	
+	if (viewModel.entries[panel]()[0] == entries[0]){//This is obviously terrible but it'll do. I believe the worst outcome is curiously reversed ordering at times.
+		entries = entries.reverse()
+	}
+	
+	viewModel.entries[panel](entries);
+}
 
 function bytesToSize(bytes) {
     if (isNaN(bytes)) {
@@ -42,6 +57,16 @@ function getPreviewable(){
 	return false;
 }
 
+function getEntreable(){
+	for (var i=0; i < viewModel.activePanels().length; i++) {
+		var panel = viewModel.activePanels()[i];
+		if(viewModel.info[panel]() != null && viewModel.info[panel]().directory){
+			return true;
+		}
+	}
+	return false;
+}
+
 function switchToPreview(){
 	if(!(viewModel.previewable())){
 		return;
@@ -54,6 +79,7 @@ function switchToPreview(){
 			loadPreview(panel)
 		}
 	};
+	resize;
 }
 
 function switchToDiff(){
@@ -62,5 +88,6 @@ function switchToDiff(){
 	}
 	
 	viewModel.detailsView('diff')
+	resize;
 	loadDiff()
 }
